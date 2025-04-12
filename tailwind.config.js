@@ -50,6 +50,30 @@ module.exports = {
           dark: '#D43C18',
         },
       },
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease-out forwards',
+        'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+        'slide-in-up': 'slideInUp 0.3s ease-out forwards',
+        'slide-out-down': 'slideOutDown 0.3s ease-in forwards',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translate3d(0, 10%, 0)' },
+          '100%': { opacity: '1', transform: 'translate3d(0, 0, 0)' },
+        },
+        slideInUp: {
+          '0%': { transform: 'translateY(1rem)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideOutDown: {
+          '0%': { transform: 'translateY(0)', opacity: '1' },
+          '100%': { transform: 'translateY(1rem)', opacity: '0' },
+        },
+      },
     },
   },
   plugins: [],

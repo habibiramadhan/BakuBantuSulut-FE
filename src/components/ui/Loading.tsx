@@ -2,25 +2,57 @@
 import React from 'react';
 
 interface LoadingProps {
-  size?: 'sm' | 'md' | 'lg';
-  color?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  color?: 'primary' | 'secondary' | 'accent' | 'white';
   text?: string;
+  center?: boolean;
+  fullScreen?: boolean;
 }
 
-const Loading = ({ size = 'md', color = 'text-babyBlue', text }: LoadingProps) => {
+const Loading = ({ 
+  size = 'md', 
+  color = 'primary', 
+  text, 
+  center = false,
+  fullScreen = false 
+}: LoadingProps) => {
+  // Size mapping
   const sizeClasses = {
-    sm: 'h-4 w-4 border-2',
+    xs: 'h-3 w-3 border-2',
+    sm: 'h-5 w-5 border-2',
     md: 'h-8 w-8 border-3',
     lg: 'h-12 w-12 border-4',
   };
 
+  // Color mapping - using your brand colors
+  const colorClasses = {
+    primary: 'border-babyBlue-dark border-t-transparent',
+    secondary: 'border-lavender-dark border-t-transparent',
+    accent: 'border-poppy-dark border-t-transparent',
+    white: 'border-white border-t-transparent',
+  };
+
+  const textColors = {
+    primary: 'text-babyBlue-dark',
+    secondary: 'text-lavender-dark',
+    accent: 'text-poppy-dark',
+    white: 'text-white',
+  };
+
+  const containerClasses = [
+    "flex flex-col items-center justify-center",
+    center && "mx-auto",
+    fullScreen && "fixed inset-0 bg-white/80 backdrop-blur-sm z-50"
+  ].filter(Boolean).join(" ");
+
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className={containerClasses}>
       <div
-        className={`${sizeClasses[size]} rounded-full border-gray-200 border-t-transparent border-solid animate-spin ${color}`}
+        className={`rounded-full border-solid animate-spin ${sizeClasses[size]} ${colorClasses[color]}`}
+        aria-hidden="true"
       />
       {text && (
-        <p className="mt-2 text-sm text-gray-500">{text}</p>
+        <p className={`mt-3 text-sm font-medium ${textColors[color]}`}>{text}</p>
       )}
     </div>
   );

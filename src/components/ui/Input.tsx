@@ -1,6 +1,7 @@
 // src/components/ui/Input.tsx
 import { InputHTMLAttributes, ReactNode, forwardRef, useState } from 'react';
-// Helper function yang akan selalu mengembalikan string
+
+// Helper function that will always return a string
 const cn = (...classes: (string | boolean | undefined)[]) => {
   return classes.filter(cls => typeof cls === 'string' && cls).join(' ');
 };
@@ -8,13 +9,26 @@ const cn = (...classes: (string | boolean | undefined)[]) => {
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  helperText?: string;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   showPasswordToggle?: boolean;
+  fullWidth?: boolean;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, leftIcon, rightIcon, showPasswordToggle, type = 'text', ...props }, ref) => {
+  ({ 
+    className, 
+    label, 
+    error, 
+    helperText,
+    leftIcon, 
+    rightIcon, 
+    showPasswordToggle, 
+    fullWidth = true,
+    type = 'text', 
+    ...props 
+  }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
     
     const togglePasswordVisibility = () => {
@@ -26,15 +40,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       : type;
     
     return (
-      <div className="w-full">
+      <div className={cn(fullWidth ? "w-full" : "")}>
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">
             {label}
           </label>
         )}
         <div className="relative">
           {leftIcon && (
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
               {leftIcon}
             </div>
           )}
@@ -42,10 +56,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             type={inputType}
             className={cn(
-              "flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:border-babyBlue focus:ring-1 focus:ring-babyBlue disabled:cursor-not-allowed disabled:opacity-50",
+              "flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm transition-colors",
+              "placeholder:text-gray-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+              "shadow-sm",
+              error 
+                ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500" 
+                : "border-gray-300 focus:border-babyBlue focus:ring-1 focus:ring-babyBlue",
               leftIcon ? "pl-10" : "",
               (rightIcon || showPasswordToggle) ? "pr-10" : "",
-              error ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "",
               className || ""
             )}
             {...props}
@@ -56,7 +74,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="text-gray-500 focus:outline-none"
+                  className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                  tabIndex={-1}
                 >
                   {showPassword ? (
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -75,7 +94,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
         </div>
-        {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+        {error && (
+          <p className="mt-1.5 text-sm text-red-500 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            {error}
+          </p>
+        )}
+        {helperText && !error && (
+          <p className="mt-1.5 text-xs text-gray-500">{helperText}</p>
+        )}
       </div>
     );
   }
