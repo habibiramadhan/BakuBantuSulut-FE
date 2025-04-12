@@ -20,6 +20,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showDemo, setShowDemo] = useState(false);
   
   useEffect(() => {
     // If already authenticated, redirect to dashboard
@@ -66,6 +67,16 @@ export default function LoginPage() {
       toast.error(errorMessage, 'Authentication Error');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fillDemoCredentials = (role: 'admin' | 'superadmin') => {
+    if (role === 'admin') {
+      setEmail('admin@bakubantu.id');
+      setPassword('password123'); 
+    } else {
+      setEmail('superadmin@bakubantu.id');
+      setPassword('password123');
     }
   };
 
@@ -133,6 +144,52 @@ export default function LoginPage() {
           >
             Forgot Password?
           </Link>
+        </div>
+
+        {/* Demo Accounts */}
+        <div className="bg-blue-50 p-4 rounded-md">
+          <div className="flex justify-between items-center mb-2">
+            <h4 className="text-sm font-medium text-blue-800">Demo Accounts</h4>
+            <button
+              type="button"
+              className="text-xs text-blue-600 hover:text-blue-800"
+              onClick={() => setShowDemo(!showDemo)}
+            >
+              {showDemo ? 'Hide' : 'Show'} Details
+            </button>
+          </div>
+          {showDemo && (
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-xs font-medium text-gray-700">Admin</p>
+                  <p className="text-xs text-gray-500">admin@bakubantu.id / password123</p>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => fillDemoCredentials('admin')}
+                >
+                  Use
+                </Button>
+              </div>
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-xs font-medium text-gray-700">Super Admin</p>
+                  <p className="text-xs text-gray-500">superadmin@bakubantu.id / password123</p>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => fillDemoCredentials('superadmin')}
+                >
+                  Use
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         <Button 

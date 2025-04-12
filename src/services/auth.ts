@@ -8,8 +8,9 @@ export interface User {
   id: string;
   username: string;
   email: string;
-  profileImage: string;
-  role: string;
+  profileImage: string | null;
+  role: 'ADMIN' | 'SUPERADMIN';
+  region?: string;
   createdAt: string;
   updatedAt: string;
   createdBy: string | null;
@@ -23,21 +24,55 @@ export interface LoginResponse {
   };
 }
 
+// Mock login function for development
 export async function login(credentials: LoginCredentials): Promise<LoginResponse> {
-  const response = await fetch('https://baku-bantu.vercel.app/auth/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(credentials),
+  // In production, this would be an API call
+  return new Promise((resolve, reject) => {
+    // Simulate network delay
+    setTimeout(() => {
+      // Simulate authentication
+      if (credentials.email === 'admin@bakubantu.id' && credentials.password === 'password123') {
+        const response: LoginResponse = {
+          message: 'Login successful',
+          data: {
+            user: {
+              id: '1',
+              username: 'Admin',
+              email: 'admin@bakubantu.id',
+              profileImage: null,
+              role: 'ADMIN',
+              region: 'DKI Jakarta',
+              createdAt: '2025-01-01T00:00:00.000Z',
+              updatedAt: '2025-01-01T00:00:00.000Z',
+              createdBy: null
+            },
+            token: 'mock-jwt-token-for-admin'
+          }
+        };
+        resolve(response);
+      } else if (credentials.email === 'superadmin@bakubantu.id' && credentials.password === 'password123') {
+        const response: LoginResponse = {
+          message: 'Login successful',
+          data: {
+            user: {
+              id: '2',
+              username: 'Super Admin',
+              email: 'superadmin@bakubantu.id',
+              profileImage: null,
+              role: 'SUPERADMIN',
+              createdAt: '2025-01-01T00:00:00.000Z',
+              updatedAt: '2025-01-01T00:00:00.000Z',
+              createdBy: null
+            },
+            token: 'mock-jwt-token-for-superadmin'
+          }
+        };
+        resolve(response);
+      } else {
+        reject(new Error('Email atau password salah. Silakan coba lagi.'));
+      }
+    }, 1000);
   });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Login failed');
-  }
-
-  return response.json();
 }
 
 export function logout(): void {
@@ -88,4 +123,17 @@ export function setAuthData(token: string, user: User): void {
   
   // Also set a cookie for the middleware
   document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Strict`;
+}
+
+export function hasPermission(requiredRole: 'ADMIN' | 'SUPERADMIN'): boolean {
+  const user = getUser();
+  if (!user) return false;
+  
+  // SUPERADMIN has access to everything
+  if (user.role === 'SUPERADMIN') return true;
+  
+  // ADMIN only has access to ADMIN level permissions
+  if (user.role === 'ADMIN' && requiredRole === 'ADMIN') return true;
+  
+  return false;
 }
