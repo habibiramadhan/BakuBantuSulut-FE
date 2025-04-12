@@ -85,7 +85,7 @@ const Toast = ({
 
   return (
     <div 
-      className={`pointer-events-auto max-w-sm ${
+      className={`pointer-events-auto w-full md:w-96 ${
         isLeaving ? 'animate-slide-out-down' : 'animate-slide-in-up'
       }`}
     >

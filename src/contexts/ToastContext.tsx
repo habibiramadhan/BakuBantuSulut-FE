@@ -83,9 +83,9 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     >
       {children}
       
-      {/* Toast container - fixed at the bottom right */}
+      {/* Toast container - fixed at the bottom right with improved width */}
       {toasts.length > 0 && (
-        <div className="fixed bottom-0 right-0 z-50 p-6 space-y-4 pointer-events-none">
+        <div className="fixed bottom-0 right-0 z-50 p-4 md:p-6 space-y-4 pointer-events-none w-full md:max-w-md">
           {toasts.map((toast) => (
             <Toast
               key={toast.id}
