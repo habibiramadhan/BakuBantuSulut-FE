@@ -6,102 +6,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import DonationChart from '@/components/charts/DonationChart';
+import { Header, Footer, CallToAction } from '@/components/common';
 
-// Header Component
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  return (
-    <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-white/80 backdrop-blur-md py-4'}`}>
-      <div className="container mx-auto px-6">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center group">
-              <h1 className="text-2xl font-medium text-gray-900 transition-all duration-300 
-                             group-hover:scale-105 transform origin-left">
-                baku<span className="font-bold text-babyBlue-dark">bantu</span>
-              </h1>
-            </Link>
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-1">
-            <Link href="/" className="px-4 py-2 text-gray-700 hover:text-babyBlue-dark hover:bg-babyBlue-light/20 rounded-md transition-all duration-200">
-              Beranda
-            </Link>
-            <Link href="#about" className="px-4 py-2 text-gray-700 hover:text-babyBlue-dark hover:bg-babyBlue-light/20 rounded-md transition-all duration-200">
-              Tentang Kami
-            </Link>
-            <Link href="#services" className="px-4 py-2 text-gray-700 hover:text-babyBlue-dark hover:bg-babyBlue-light/20 rounded-md transition-all duration-200">
-              Layanan
-            </Link>
-            <Link href="#projects" className="px-4 py-2 text-gray-700 hover:text-babyBlue-dark hover:bg-babyBlue-light/20 rounded-md transition-all duration-200">
-              Media
-            </Link>
-            <Link href="#contact" className="px-4 py-2 text-gray-700 hover:text-babyBlue-dark hover:bg-babyBlue-light/20 rounded-md transition-all duration-200">
-              Kontak
-            </Link>
-          </nav>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-babyBlue-dark hover:bg-babyBlue-light/20 transition-colors"
-              aria-expanded={isMenuOpen}
-            >
-              <span className="sr-only">Buka menu utama</span>
-              <svg
-                className={`h-6 w-6 ${isMenuOpen ? 'hidden' : 'block'}`}
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-              <svg
-                className={`h-6 w-6 ${isMenuOpen ? 'block' : 'hidden'}`}
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-80' : 'max-h-0'}`}>
-        <div className="px-4 pt-2 pb-3 space-y-1 bg-white/95 backdrop-blur-md shadow-inner">
-          <Link href="/" className="block px-3 py-2 text-gray-700 rounded-md hover:bg-babyBlue-light/30 hover:text-babyBlue-dark">Beranda</Link>
-          <Link href="#about" className="block px-3 py-2 text-gray-700 rounded-md hover:bg-babyBlue-light/30 hover:text-babyBlue-dark">Tentang Kami</Link>
-          <Link href="#services" className="block px-3 py-2 text-gray-700 rounded-md hover:bg-babyBlue-light/30 hover:text-babyBlue-dark">Layanan</Link>
-          <Link href="#projects" className="block px-3 py-2 text-gray-700 rounded-md hover:bg-babyBlue-light/30 hover:text-babyBlue-dark">Media</Link>
-          <Link href="#contact" className="block px-3 py-2 text-gray-700 rounded-md hover:bg-babyBlue-light/30 hover:text-babyBlue-dark">Kontak</Link>
-        </div>
-      </div>
-    </header>
-  );
-};
 // Hero Section Component
 const HeroSection = () => {
   return (
@@ -390,33 +296,6 @@ const DonationSection = () => {
   );
 };
 
-// Komponen Ajakan Bertindak
-// Komponen Ajakan Bertindak yang diperbarui dengan margin lebih besar
-const CallToActionSection = () => {
-  return (
-    <section className="py-24 my-16">
-      <div className="container mx-auto px-12">
-        <div className="bg-cover bg-center rounded-3xl overflow-hidden relative" style={{ backgroundImage: "url('/images/cta-background.jpeg')", minHeight: "320px" }}>
-          <div className="absolute inset-0 bg-black/60"></div>
-          <div className="relative z-10 text-center text-white py-24 px-4 md:px-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-12">
-              Di sini torang bantu ngoni<br />
-              Supaya ngoni boleh bantu yang laeng!
-            </h2>
-            <div className="flex flex-wrap justify-center gap-6">
-              <button className="bg-mango hover:bg-mango-dark text-black px-8 py-3 rounded-md font-medium transition-colors">
-                Bergabung sebagai Relawan
-              </button>
-              <button className="bg-white hover:bg-gray-100 text-black px-8 py-3 rounded-md font-medium transition-colors">
-                donasi
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
 // Komponen Bagian Acara
 const EventsSection = () => {
   return (
@@ -460,53 +339,6 @@ const EventsSection = () => {
   );
 };
 
-// Komponen Footer
-const Footer = () => {
-  return (
-    <footer className="bg-black text-white pt-16 pb-8">
-      <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 pb-10 border-b border-gray-800">
-          <div>
-            <h2 className="text-2xl font-medium mb-6">
-              baku<span className="font-bold text-babyBlue">bantu</span>
-            </h2>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Beranda</h3>
-            <ul className="space-y-2">
-              <li><Link href="/" className="text-gray-400 hover:text-white">Beranda</Link></li>
-              <li><Link href="#about" className="text-gray-400 hover:text-white">Tentang kami</Link></li>
-              <li><Link href="#team" className="text-gray-400 hover:text-white">Tim</Link></li>
-              <li><Link href="#what-we-do" className="text-gray-400 hover:text-white">Yang kami lakukan</Link></li>
-              <li><Link href="#contact" className="text-gray-400 hover:text-white">Kontak</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Lainnya</h3>
-            <ul className="space-y-2">
-              <li><Link href="#projects" className="text-gray-400 hover:text-white">Proyek</Link></li>
-              <li><Link href="#events" className="text-gray-400 hover:text-white">Acara</Link></li>
-              <li><Link href="#donate" className="text-gray-400 hover:text-white">Donasi</Link></li>
-              <li><Link href="#blog" className="text-gray-400 hover:text-white">Blog</Link></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Terhubung</h3>
-            <ul className="space-y-2">
-              <li><Link href="#facebook" className="text-gray-400 hover:text-white">Facebook</Link></li>
-              <li><Link href="#instagram" className="text-gray-400 hover:text-white">Instagram</Link></li>
-              <li><Link href="#twitter" className="text-gray-400 hover:text-white">Twitter</Link></li>
-              <li><Link href="#linkedin" className="text-gray-400 hover:text-white">Linkedin</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-};
 
 // Komponen Halaman Utama
 export default function Home() {
@@ -519,7 +351,7 @@ export default function Home() {
         <ServicesSection />
         <ProjectsSection />
         <DonationSection />
-        <CallToActionSection />
+        <CallToAction />
         <EventsSection />
       </main>
       <Footer />
