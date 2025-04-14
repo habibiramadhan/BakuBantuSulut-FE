@@ -105,30 +105,16 @@ const Header = () => {
 const HeroSection = () => {
   return (
     <section className="relative bg-cover bg-center h-screen flex items-center" 
-             style={{ backgroundImage: "url('/images/hero-children.jpg')" }}>
+             style={{ backgroundImage: "url('/images/Hero.png')" }}>
       <div className="absolute inset-0 bg-black opacity-50"></div>
       <div className="container mx-auto px-6 relative z-10 text-white">
         <div className="max-w-2xl">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Inclusive care for children with special needs
+            Bersama Kita Bantu, Bersama Kita Tumbuh
           </h1>
           <div className="flex flex-wrap gap-4 mt-8">
             <Link href="#what-we-do">
-              <Button variant="primary" size="lg">What we do</Button>
-            </Link>
-            <Link href="#video">
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-white text-white hover:bg-white/10"
-                leftIcon={
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                  </svg>
-                }
-              >
-                Play Video
-              </Button>
+              <Button variant="primary" size="lg">Apa yang Kami Lakukan</Button>
             </Link>
           </div>
         </div>
@@ -137,12 +123,12 @@ const HeroSection = () => {
       <div className="absolute bottom-10 left-0 right-0 flex justify-between px-10 lg:px-20 text-white">
         <div className="text-center">
           <p className="text-xl md:text-2xl font-bold">230</p>
-          <p className="text-sm md:text-base">children under our care</p>
+          <p className="text-sm md:text-base">anak dalam asuhan kami</p>
         </div>
         <div className="border-t border-white/30 my-4 flex-grow mx-8 mt-6"></div>
         <div className="text-center">
           <p className="text-xl md:text-2xl font-bold">58</p>
-          <p className="text-sm md:text-base">donations collected</p>
+          <p className="text-sm md:text-base">donasi terkumpul</p>
         </div>
       </div>
     </section>
@@ -158,42 +144,35 @@ const AboutSection = () => {
           <div className="lg:w-1/2">
             <div className="flex items-center mb-6">
               <div className="w-12 h-px bg-babyBlue-dark mr-4"></div>
-              <p className="text-sm uppercase tracking-wider font-semibold text-gray-600">KNOW ABOUT US</p>
+              <p className="text-sm uppercase tracking-wider font-semibold text-gray-600">TENTANG KAMI</p>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              We provide a place for children with special needs
+              Menjembatani kepedulian untuk mereka yang membutuhkan
             </h2>
             
             <p className="text-gray-600 mb-6">
-              At bakubantu, we believe every child deserves care, love, and opportunities to thrive. Our organization connects resources to orphanages and communities in need across Indonesia, focusing on creating lasting positive change.
+              Di bakubantu, kami percaya bahwa kebersamaan adalah kunci perubahan sosial. Kami menghubungkan sumber daya dengan panti asuhan dan komunitas yang membutuhkan di seluruh Indonesia, berfokus pada pemberdayaan berkelanjutan yang berdampak positif.
             </p>
             
             <p className="text-gray-600 mb-8">
-              We work with local communities, volunteers, and partner organizations to ensure that children in orphanages have access to quality education, healthcare, and emotional support. Our programs are designed to be sustainable and community-driven.
+              Kami berkolaborasi dengan masyarakat lokal, relawan, dan organisasi mitra untuk memastikan bahwa mereka yang rentan mendapatkan akses pendidikan berkualitas, layanan kesehatan, dan dukungan emosional. Program kami dirancang untuk berkelanjutan dan digerakkan oleh semangat gotong royong.
             </p>
             
             <Link href="#learn-more">
-              <Button variant="secondary">Learn more</Button>
+              <Button variant="secondary">Pelajari Lebih Lanjut</Button>
             </Link>
           </div>
           
           <div className="lg:w-1/2">
             <div className="relative rounded-lg overflow-hidden">
               <Image 
-                src="/images/about-children.jpg" 
+                src="/images/about_us_01.jpeg" 
                 alt="Children walking together" 
                 width={600} 
                 height={400} 
                 className="w-full h-auto object-cover"
               />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <button className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-babyBlue-dark" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -211,15 +190,15 @@ const ServicesSection = () => {
           <div className="lg:w-1/2">
             <div className="flex items-center mb-6">
               <div className="w-12 h-px bg-babyBlue-dark mr-4"></div>
-              <p className="text-sm uppercase tracking-wider font-semibold text-gray-600">WHAT WE DO</p>
+              <p className="text-sm uppercase tracking-wider font-semibold text-gray-600">LAYANAN KAMI</p>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Some services we provide for our children
+              Beberapa layanan yang kami berikan untuk anak-anak
             </h2>
             
             <p className="text-gray-600 mb-10">
-              We offer various services to ensure the wellbeing and development of children in our care. Our holistic approach addresses their physical, emotional, and educational needs.
+              Kami menyediakan berbagai layanan untuk memastikan kesejahteraan dan perkembangan anak-anak dalam asuhan kami. Pendekatan holistik kami memenuhi kebutuhan fisik, emosional, dan pendidikan mereka.
             </p>
             
             <div className="space-y-8">
@@ -230,8 +209,8 @@ const ServicesSection = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Family support</h3>
-                  <p className="text-gray-600">We provide guidance and resources to families of children with special needs, helping them navigate challenges and access support services.</p>
+                  <h3 className="text-lg font-semibold mb-2">Dukungan Keluarga</h3>
+                  <p className="text-gray-600">Kami memberikan bimbingan dan sumber daya kepada keluarga anak berkebutuhan khusus, membantu mereka menghadapi tantangan dan mengakses layanan dukungan.</p>
                 </div>
               </div>
               
@@ -242,8 +221,8 @@ const ServicesSection = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Health benefits</h3>
-                  <p className="text-gray-600">Regular health check-ups, nutrition guidance, and access to medical care ensure children's physical wellbeing and development.</p>
+                  <h3 className="text-lg font-semibold mb-2">Manfaat Kesehatan</h3>
+                  <p className="text-gray-600">Pemeriksaan kesehatan rutin, panduan gizi, dan akses ke perawatan medis untuk memastikan kesejahteraan dan perkembangan fisik anak-anak.</p>
                 </div>
               </div>
               
@@ -254,8 +233,8 @@ const ServicesSection = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Scholarships</h3>
-                  <p className="text-gray-600">We provide educational opportunities through scholarships, ensuring children have access to quality education regardless of their circumstances.</p>
+                  <h3 className="text-lg font-semibold mb-2">Beasiswa</h3>
+                  <p className="text-gray-600">Kami menyediakan kesempatan pendidikan melalui beasiswa, memastikan anak-anak memiliki akses ke pendidikan berkualitas terlepas dari keadaan mereka.</p>
                 </div>
               </div>
               
@@ -266,8 +245,8 @@ const ServicesSection = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Therapy</h3>
-                  <p className="text-gray-600">Specialized therapy services including physical, occupational, and speech therapy to help children develop essential skills and abilities.</p>
+                  <h3 className="text-lg font-semibold mb-2">Terapi</h3>
+                  <p className="text-gray-600">Layanan terapi khusus termasuk fisik, okupasi, dan terapi wicara untuk membantu anak-anak mengembangkan keterampilan dan kemampuan penting.</p>
                 </div>
               </div>
             </div>
@@ -276,8 +255,8 @@ const ServicesSection = () => {
           <div className="lg:w-1/2 flex items-center justify-center">
             <div className="rounded-lg overflow-hidden shadow-lg">
               <Image 
-                src="/images/services-child.jpg" 
-                alt="Child with headphones" 
+                src="/images/services-learning.jpeg" 
+                alt="Anak-anak sedang belajar" 
                 width={500} 
                 height={600} 
                 className="w-full h-auto object-cover"
@@ -290,34 +269,34 @@ const ServicesSection = () => {
   );
 };
 
-// Projects Section Component
+// Komponen Bagian Proyek
 const ProjectsSection = () => {
   return (
     <section id="projects" className="py-20">
       <div className="container mx-auto px-6">
         <div className="flex items-center mb-10">
           <div className="w-12 h-px bg-babyBlue-dark mr-4"></div>
-          <p className="text-sm uppercase tracking-wider font-semibold text-gray-600">PROJECTS WE HAVE DONE</p>
+          <p className="text-sm uppercase tracking-wider font-semibold text-gray-600">PROYEK YANG TELAH KAMI LAKUKAN</p>
         </div>
         
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12">
-          We are creating a place where children with special needs can thrive
+          Kami menciptakan tempat di mana anak-anak berkebutuhan khusus dapat berkembang
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="relative rounded-lg overflow-hidden h-96 group">
             <Image 
               src="/images/project-1.jpg" 
-              alt="Mission smile" 
+              alt="Misi senyum" 
               fill
               className="object-cover transition-transform group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
-              <h3 className="text-xl font-bold mb-2">Mission smile 1k: Outdoor charity</h3>
-              <p className="text-white/80 mb-4">Our initiative to bring joy and outdoor experiences to 1,000 children in orphanages across Indonesia.</p>
+              <h3 className="text-xl font-bold mb-2">Misi senyum 1000: Amal di luar ruangan</h3>
+              <p className="text-white/80 mb-4">Inisiatif kami untuk membawa kegembiraan dan pengalaman di luar ruangan kepada 1.000 anak di panti asuhan di seluruh Indonesia.</p>
               <Link href="#learn-more">
                 <Button variant="outline" size="sm" className="border-white text-white hover:bg-white/10 w-fit">
-                  Learn more
+                  Pelajari lebih lanjut
                 </Button>
               </Link>
             </div>
@@ -326,16 +305,16 @@ const ProjectsSection = () => {
           <div className="relative rounded-lg overflow-hidden h-96 group">
             <Image 
               src="/images/project-2.jpg" 
-              alt="Weekly excursions" 
+              alt="Kegiatan mingguan" 
               fill
               className="object-cover transition-transform group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
-              <h3 className="text-xl font-bold mb-2">Weekly excursions</h3>
-              <p className="text-white/80 mb-4">Regular excursions that provide children with educational and recreational opportunities outside their daily environment.</p>
+              <h3 className="text-xl font-bold mb-2">Kegiatan mingguan</h3>
+              <p className="text-white/80 mb-4">Kegiatan rutin yang memberikan anak-anak kesempatan pendidikan dan rekreasi di luar lingkungan sehari-hari mereka.</p>
               <Link href="#learn-more">
                 <Button variant="outline" size="sm" className="border-white text-white hover:bg-white/10 w-fit">
-                  Learn more
+                  Pelajari lebih lanjut
                 </Button>
               </Link>
             </div>
@@ -344,16 +323,16 @@ const ProjectsSection = () => {
           <div className="relative rounded-lg overflow-hidden h-96 group">
             <Image 
               src="/images/project-3.jpg" 
-              alt="Monthly public awareness" 
+              alt="Kesadaran publik bulanan" 
               fill
               className="object-cover transition-transform group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
-              <h3 className="text-xl font-bold mb-2">Monthly public awareness</h3>
-              <p className="text-white/80 mb-4">Public events and campaigns to raise awareness about the needs of orphaned children and how communities can support them.</p>
+              <h3 className="text-xl font-bold mb-2">Kesadaran publik bulanan</h3>
+              <p className="text-white/80 mb-4">Acara dan kampanye publik untuk meningkatkan kesadaran tentang kebutuhan anak-anak yatim piatu dan bagaimana masyarakat dapat mendukung mereka.</p>
               <Link href="#learn-more">
                 <Button variant="outline" size="sm" className="border-white text-white hover:bg-white/10 w-fit">
-                  Learn more
+                  Pelajari lebih lanjut
                 </Button>
               </Link>
             </div>
@@ -364,7 +343,7 @@ const ProjectsSection = () => {
   );
 };
 
-// Donation Section Component
+// Komponen Bagian Donasi
 const DonationSection = () => {
   return (
     <section className="py-20 bg-black text-white">
@@ -372,31 +351,31 @@ const DonationSection = () => {
         <div className="flex flex-col lg:flex-row gap-12 items-center">
           <div className="lg:w-1/2">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              How we spend your donations and where it goes
+              Bagaimana kami menggunakan donasi Anda dan ke mana donasi tersebut dialokasikan
             </h2>
             <p className="text-white/80 mb-8">
-              We understand that when you make a donation, you want to know exactly where your money is going and we pledge to be transparent.
+              Kami memahami bahwa ketika Anda berdonasi, Anda ingin tahu persis ke mana uang Anda mengalir dan kami berjanji untuk transparan.
             </p>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-babyBlue rounded-sm mr-2"></div>
-                <span>40% child care home</span>
+                <span>40% panti asuhan</span>
               </div>
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-lavender rounded-sm mr-2"></div>
-                <span>35% cleanliness program</span>
+                <span>35% program kebersihan</span>
               </div>
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-mango rounded-sm mr-2"></div>
-                <span>10% excursions</span>
+                <span>10% kegiatan luar</span>
               </div>
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-poppy rounded-sm mr-2"></div>
-                <span>5% feeding the poor</span>
+                <span>5% memberi makan</span>
               </div>
               <div className="flex items-center">
                 <div className="w-4 h-4 bg-forest rounded-sm mr-2"></div>
-                <span>10% helping people</span>
+                <span>10% membantu orang</span>
               </div>
             </div>
           </div>
@@ -405,11 +384,16 @@ const DonationSection = () => {
             <div className="w-64 h-64 relative">
               <svg viewBox="0 0 100 100" className="w-full h-full">
                 <circle cx="50" cy="50" r="40" fill="transparent" stroke="#555" strokeWidth="8" />
+                {/* 40% panti asuhan */}
                 <circle cx="50" cy="50" r="40" fill="transparent" stroke="#9FC4E8" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="150.72" transform="rotate(-90 50 50)" />
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#CFA4CC" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="63" transform="rotate(125.28 50 50)" />
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#F5AB54" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="220" transform="rotate(62.28 50 50)" />
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#EE5A36" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="235" transform="rotate(41.64 50 50)" />
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#1A9562" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="220" transform="rotate(16.56 50 50)" />
+                {/* 35% program kebersihan */}
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#CFA4CC" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="163.28" transform="rotate(54 50 50)" />
+                {/* 10% kegiatan luar */}
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#F5AB54" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="226.08" transform="rotate(180 50 50)" />
+                {/* 5% memberi makan */}
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#EE5A36" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="238.64" transform="rotate(216 50 50)" />
+                {/* 10% membantu orang */}
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#1A9562" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="226.08" transform="rotate(234 50 50)" />
                 <circle cx="50" cy="50" r="20" fill="black" />
               </svg>
             </div>
@@ -420,28 +404,28 @@ const DonationSection = () => {
   );
 };
 
-// Call to Action Section Component
+// Komponen Ajakan Bertindak
 const CallToActionSection = () => {
   return (
     <section className="relative py-16 bg-cover bg-center" style={{ backgroundImage: "url('/images/cta-background.jpg')" }}>
       <div className="absolute inset-0 bg-black opacity-70"></div>
       <div className="container mx-auto px-6 relative z-10 text-center text-white">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">
-          You can contribute to provide a place for children with special needs!
+          Di Sini Torang Bantu Ngoni, Supaya Ngoni Boleh Bantu Yang Laeng!
         </h2>
         <div className="flex flex-wrap justify-center gap-4 mt-8">
           <Button 
             variant="secondary"
             size="lg"
           >
-            Join as a volunteer
+            Bergabung sebagai relawan
           </Button>
           <Button 
             variant="outline"
             size="lg"
             className="border-white text-white hover:bg-white/10"
           >
-            Donate
+            Donasi
           </Button>
         </div>
       </div>
@@ -449,12 +433,12 @@ const CallToActionSection = () => {
   );
 };
 
-// Events Section Component
+// Komponen Bagian Acara
 const EventsSection = () => {
   return (
     <section className="py-16">
       <div className="container mx-auto px-6">
-        <h2 className="text-3xl font-bold text-gray-900 mb-10">Our Events</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-10">Acara Kami</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-mango-light rounded-lg p-6 flex justify-between items-center">
@@ -463,7 +447,7 @@ const EventsSection = () => {
                 <span className="text-3xl font-bold">13</span>
                 <p className="text-xs uppercase">APR</p>
               </div>
-              <h3 className="text-xl font-semibold mt-4">A day with our wonderful children</h3>
+              <h3 className="text-xl font-semibold mt-4">Sehari bersama anak-anak luar biasa kami</h3>
             </div>
             <div className="bg-white rounded-full p-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -478,7 +462,7 @@ const EventsSection = () => {
                 <span className="text-3xl font-bold">25</span>
                 <p className="text-xs uppercase">APR</p>
               </div>
-              <h3 className="text-xl font-semibold mt-4">Seminar: Caring for children with autism</h3>
+              <h3 className="text-xl font-semibold mt-4">Seminar: Merawat anak-anak dengan autisme</h3>
             </div>
             <div className="bg-white rounded-full p-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -492,7 +476,7 @@ const EventsSection = () => {
   );
 };
 
-// Footer Component
+// Komponen Footer
 const Footer = () => {
   return (
     <footer className="bg-black text-white pt-16 pb-8">
@@ -505,28 +489,28 @@ const Footer = () => {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold mb-4">Home</h3>
+            <h3 className="text-lg font-semibold mb-4">Beranda</h3>
             <ul className="space-y-2">
-              <li><Link href="/" className="text-gray-400 hover:text-white">Home</Link></li>
-              <li><Link href="#about" className="text-gray-400 hover:text-white">About us</Link></li>
-              <li><Link href="#team" className="text-gray-400 hover:text-white">Team</Link></li>
-              <li><Link href="#what-we-do" className="text-gray-400 hover:text-white">What we do</Link></li>
-              <li><Link href="#contact" className="text-gray-400 hover:text-white">Contact</Link></li>
+              <li><Link href="/" className="text-gray-400 hover:text-white">Beranda</Link></li>
+              <li><Link href="#about" className="text-gray-400 hover:text-white">Tentang kami</Link></li>
+              <li><Link href="#team" className="text-gray-400 hover:text-white">Tim</Link></li>
+              <li><Link href="#what-we-do" className="text-gray-400 hover:text-white">Yang kami lakukan</Link></li>
+              <li><Link href="#contact" className="text-gray-400 hover:text-white">Kontak</Link></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold mb-4">More</h3>
+            <h3 className="text-lg font-semibold mb-4">Lainnya</h3>
             <ul className="space-y-2">
-              <li><Link href="#projects" className="text-gray-400 hover:text-white">Projects</Link></li>
-              <li><Link href="#events" className="text-gray-400 hover:text-white">Events</Link></li>
-              <li><Link href="#donate" className="text-gray-400 hover:text-white">Donate</Link></li>
+              <li><Link href="#projects" className="text-gray-400 hover:text-white">Proyek</Link></li>
+              <li><Link href="#events" className="text-gray-400 hover:text-white">Acara</Link></li>
+              <li><Link href="#donate" className="text-gray-400 hover:text-white">Donasi</Link></li>
               <li><Link href="#blog" className="text-gray-400 hover:text-white">Blog</Link></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold mb-4">Connect</h3>
+            <h3 className="text-lg font-semibold mb-4">Terhubung</h3>
             <ul className="space-y-2">
               <li><Link href="#facebook" className="text-gray-400 hover:text-white">Facebook</Link></li>
               <li><Link href="#instagram" className="text-gray-400 hover:text-white">Instagram</Link></li>
@@ -538,17 +522,17 @@ const Footer = () => {
         
         <div className="pt-10 flex flex-col md:flex-row justify-between items-start md:items-center">
           <div className="mb-6 md:mb-0">
-            <h3 className="text-2xl font-bold mb-4">Subscribe to get latest updates</h3>
+            <h3 className="text-2xl font-bold mb-4">Berlangganan untuk mendapatkan pembaruan terbaru</h3>
           </div>
           
           <div className="flex w-full md:w-auto">
             <input 
               type="email" 
-              placeholder="Your email" 
+              placeholder="Email Anda" 
               className="bg-gray-900 border border-gray-700 text-white px-4 py-2 rounded-l-md w-full md:w-64 focus:outline-none focus:ring-1 focus:ring-babyBlue"
             />
             <button className="bg-white text-black px-6 py-2 rounded-r-md font-medium">
-              Subscribe
+              Berlangganan
             </button>
           </div>
         </div>
@@ -557,7 +541,7 @@ const Footer = () => {
   );
 };
 
-// Main Page Component
+// Komponen Halaman Utama
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
