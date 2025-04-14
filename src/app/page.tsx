@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import DonationChart from '@/components/charts/DonationChart';
 
 // Header Component
 const Header = () => {
@@ -381,22 +382,7 @@ const DonationSection = () => {
           </div>
           
           <div className="lg:w-1/2 flex justify-center">
-            <div className="w-64 h-64 relative">
-              <svg viewBox="0 0 100 100" className="w-full h-full">
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#555" strokeWidth="8" />
-                {/* 40% panti asuhan */}
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#9FC4E8" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="150.72" transform="rotate(-90 50 50)" />
-                {/* 35% program kebersihan */}
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#CFA4CC" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="163.28" transform="rotate(54 50 50)" />
-                {/* 10% kegiatan luar */}
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#F5AB54" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="226.08" transform="rotate(180 50 50)" />
-                {/* 5% memberi makan */}
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#EE5A36" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="238.64" transform="rotate(216 50 50)" />
-                {/* 10% membantu orang */}
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#1A9562" strokeWidth="8" strokeDasharray="251.2" strokeDashoffset="226.08" transform="rotate(234 50 50)" />
-                <circle cx="50" cy="50" r="20" fill="black" />
-              </svg>
-            </div>
+            <DonationChart className="w-full max-w-md" />
           </div>
         </div>
       </div>
@@ -405,34 +391,32 @@ const DonationSection = () => {
 };
 
 // Komponen Ajakan Bertindak
+// Komponen Ajakan Bertindak yang diperbarui dengan margin lebih besar
 const CallToActionSection = () => {
   return (
-    <section className="relative py-16 bg-cover bg-center" style={{ backgroundImage: "url('/images/cta-background.jpg')" }}>
-      <div className="absolute inset-0 bg-black opacity-70"></div>
-      <div className="container mx-auto px-6 relative z-10 text-center text-white">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6">
-          Di Sini Torang Bantu Ngoni, Supaya Ngoni Boleh Bantu Yang Laeng!
-        </h2>
-        <div className="flex flex-wrap justify-center gap-4 mt-8">
-          <Button 
-            variant="secondary"
-            size="lg"
-          >
-            Bergabung sebagai relawan
-          </Button>
-          <Button 
-            variant="outline"
-            size="lg"
-            className="border-white text-white hover:bg-white/10"
-          >
-            Donasi
-          </Button>
+    <section className="py-24 my-16">
+      <div className="container mx-auto px-12">
+        <div className="bg-cover bg-center rounded-3xl overflow-hidden relative" style={{ backgroundImage: "url('/images/cta-background.jpeg')", minHeight: "320px" }}>
+          <div className="absolute inset-0 bg-black/60"></div>
+          <div className="relative z-10 text-center text-white py-24 px-4 md:px-10">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12">
+              Di sini torang bantu ngoni<br />
+              Supaya ngoni boleh bantu yang laeng!
+            </h2>
+            <div className="flex flex-wrap justify-center gap-6">
+              <button className="bg-mango hover:bg-mango-dark text-black px-8 py-3 rounded-md font-medium transition-colors">
+                Bergabung sebagai Relawan
+              </button>
+              <button className="bg-white hover:bg-gray-100 text-black px-8 py-3 rounded-md font-medium transition-colors">
+                donasi
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 };
-
 // Komponen Bagian Acara
 const EventsSection = () => {
   return (
@@ -517,23 +501,6 @@ const Footer = () => {
               <li><Link href="#twitter" className="text-gray-400 hover:text-white">Twitter</Link></li>
               <li><Link href="#linkedin" className="text-gray-400 hover:text-white">Linkedin</Link></li>
             </ul>
-          </div>
-        </div>
-        
-        <div className="pt-10 flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div className="mb-6 md:mb-0">
-            <h3 className="text-2xl font-bold mb-4">Berlangganan untuk mendapatkan pembaruan terbaru</h3>
-          </div>
-          
-          <div className="flex w-full md:w-auto">
-            <input 
-              type="email" 
-              placeholder="Email Anda" 
-              className="bg-gray-900 border border-gray-700 text-white px-4 py-2 rounded-l-md w-full md:w-64 focus:outline-none focus:ring-1 focus:ring-babyBlue"
-            />
-            <button className="bg-white text-black px-6 py-2 rounded-r-md font-medium">
-              Berlangganan
-            </button>
           </div>
         </div>
       </div>
