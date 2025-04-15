@@ -66,7 +66,7 @@ const AboutSection = () => {
               Kami berkolaborasi dengan masyarakat lokal, relawan, dan organisasi mitra untuk memastikan bahwa mereka yang rentan mendapatkan akses pendidikan berkualitas, layanan kesehatan, dan dukungan emosional. Program kami dirancang untuk berkelanjutan dan digerakkan oleh semangat gotong royong.
             </p>
             
-            <Link href="#learn-more">
+            <Link href="/about">
               <Button variant="secondary">Pelajari Lebih Lanjut</Button>
             </Link>
           </div>
