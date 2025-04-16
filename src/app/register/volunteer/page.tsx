@@ -33,13 +33,14 @@ export default function VolunteerRegistrationPage() {
   const [wilayahList, setWilayahList] = useState<Wilayah[]>([]);
   const [isLoadingWilayah, setIsLoadingWilayah] = useState(true);
   const [errors, setErrors] = useState<Partial<Record<keyof VolunteerFormData, string>>>({});
+  const [retryCount, setRetryCount] = useState(0); // Menambahkan state untuk menghitung retry
   const [formData, setFormData] = useState<VolunteerFormData>({
     namaLengkap: '',
     jenisKelamin: 'MALE',
     tempatLahir: '',
     tanggalLahir: '',
     alamatDomisili: '',
-    kewarganegaraan: 'INDONESIA', // Changed default to match API expectations
+    kewarganegaraan: 'INDONESIA',
     nomorHP: '',
     email: '',
     wilayahId: '',
@@ -48,25 +49,40 @@ export default function VolunteerRegistrationPage() {
   
   // Mengambil data wilayah ketika komponen dimuat
   useEffect(() => {
+    let isMounted = true;
+
     async function fetchWilayah() {
+      if (!isMounted || retryCount >= 2) return; // Cek jumlah retry
+      
       setIsLoadingWilayah(true);
       try {
         const response = await getWilayahList();
+        if (!isMounted) return;
+
         if (response.success && response.data) {
           setWilayahList(response.data);
         } else {
           toast.error(response.message || 'Gagal mengambil data wilayah');
+          setRetryCount(prev => prev + 1); // Increment retry counter
         }
       } catch (error) {
+        if (!isMounted) return;
         toast.error('Terjadi kesalahan saat memuat data wilayah');
         console.error('Error fetching wilayah:', error);
+        setRetryCount(prev => prev + 1); // Increment retry counter
       } finally {
-        setIsLoadingWilayah(false);
+        if (isMounted) {
+          setIsLoadingWilayah(false);
+        }
       }
     }
     
     fetchWilayah();
-  }, [toast]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [toast, retryCount]); // Tambahkan retryCount ke dependencies
 
   // Handler untuk perubahan input
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
