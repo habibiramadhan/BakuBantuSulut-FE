@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { Header, Footer } from '@/components/common';
 import { useToast } from '@/contexts/ToastContext';
-import { checkRegistrationStatus, VolunteerResponse } from '@/services/volunteerService';
+import { VolunteerResponse } from '@/services/volunteerService';
 
 // Tambahkan status ke interface VolunteerResponse
 interface VolunteerResponseWithStatus extends VolunteerResponse {
@@ -54,13 +54,14 @@ export default function VolunteerSuccessPage() {
   const fetchVolunteerData = async (id: string) => {
     try {
       setIsLoading(true);
-      const response = await checkRegistrationStatus(id);
+      const response = await fetch(`/api/volunteers/${id}`);
+      const data = await response.json();
       
-      if (response.success && response.data) {
+      if (data.success && data.data) {
         // Cast response data to include status
-        setVolunteerData(response.data as VolunteerResponseWithStatus);
+        setVolunteerData(data.data as VolunteerResponseWithStatus);
       } else {
-        toast.error(response.message || 'Gagal mengambil data pendaftaran');
+        toast.error(data.message || 'Gagal mengambil data pendaftaran');
       }
     } catch (error) {
       console.error('Error fetching volunteer data:', error);

@@ -113,35 +113,3 @@ export async function getWilayahList(): Promise<ApiResponse<Wilayah[]>> {
     };
   }
 }
-
-/**
- * Check registration status
- * @param id - The volunteer registration ID
- */
-export async function checkRegistrationStatus(id: string): Promise<ApiResponse<VolunteerResponse>> {
-  try {
-    const response = await fetchApi<{
-      message: string;
-      data: VolunteerResponse;
-    }>(`/volunteers/${id}`);
-    
-    return {
-      success: true,
-      message: 'Registration status fetched successfully',
-      data: response.data
-    };
-  } catch (error) {
-    if (error instanceof ApiError) {
-      return {
-        success: false,
-        message: error.message,
-        errors: error.data?.errors
-      };
-    }
-    
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to check registration status'
-    };
-  }
-}
