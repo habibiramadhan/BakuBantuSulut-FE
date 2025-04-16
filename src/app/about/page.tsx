@@ -169,7 +169,7 @@ const TeamSection = () => {
       id: 1,
       name: "Leonard John Davies",
       position: "Pendiri, CEO",
-      image: "/images/example-profile-01.jpeg",
+      image: "/images/example-profile-03.jpeg",
       socials: {
         facebook: "#",
         twitter: "#",
@@ -191,7 +191,7 @@ const TeamSection = () => {
       id: 3,
       name: "Kyla O'brien",
       position: "Kepala Otoritas",
-      image: "/images/example-profile-01.jpeg",
+      image: "/images/example-profile-03.jpeg",
       socials: {
         facebook: "#",
         twitter: "#",
@@ -213,7 +213,7 @@ const TeamSection = () => {
       id: 5,
       name: "Freddy Busby",
       position: "Manajer Proyek",
-      image: "/images/example-profile-01.jpeg",
+      image: "/images/example-profile-03.jpeg",
       socials: {
         facebook: "#",
         twitter: "#",
@@ -235,7 +235,7 @@ const TeamSection = () => {
       id: 7,
       name: "Miriam Middleton",
       position: "Pendiri, CEO",
-      image: "/images/example-profile-01.jpeg",
+      image: "/images/example-profile-03.jpeg",
       socials: {
         facebook: "#",
         twitter: "#",

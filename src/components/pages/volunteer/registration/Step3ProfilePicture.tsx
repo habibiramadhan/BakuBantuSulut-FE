@@ -60,7 +60,7 @@ const Step3ProfilePicture = ({
       <div className="text-center">
         <div className="mb-10 max-w-md mx-auto">
           <FileInput
-            label="profileImage"
+            label=""
             showPreview
             previewUrl={previewUrl}
             onFileChange={handleFileUpload}
