@@ -8,6 +8,10 @@ import Header from '@/components/dashboard/Header';
 import Sidebar from '@/components/dashboard/Sidebar';
 import { Loading } from '@/components/ui/Loading';
 
+interface User {
+  role: 'ADMIN' | 'SUPERADMIN';
+}
+
 export default function DashboardLayout({
   children,
 }: {
@@ -15,7 +19,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     // Check if user is authenticated

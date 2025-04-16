@@ -1,5 +1,6 @@
 // src/components/ui/Toast.tsx
 import React, { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -9,6 +10,7 @@ export interface ToastProps {
   message: string;
   onClose?: () => void;
   isVisible?: boolean;
+  duration?: number;
 }
 
 const Toast = ({
@@ -17,6 +19,7 @@ const Toast = ({
   message,
   onClose,
   isVisible = true,
+  duration = 5000,
 }: ToastProps) => {
   const [visible, setVisible] = useState(isVisible);
   const [isLeaving, setIsLeaving] = useState(false);
@@ -24,6 +27,20 @@ const Toast = ({
   useEffect(() => {
     setVisible(isVisible);
   }, [isVisible]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (visible && duration > 0) {
+      timer = setTimeout(() => {
+        handleClose();
+      }, duration);
+    }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [visible, duration]);
 
   const handleClose = () => {
     setIsLeaving(true);
@@ -85,21 +102,30 @@ const Toast = ({
 
   return (
     <div 
-      className={`pointer-events-auto w-full md:w-96 ${
-        isLeaving ? 'animate-slide-out-down' : 'animate-slide-in-up'
-      }`}
+      className={cn(
+        "pointer-events-auto w-full md:w-96",
+        isLeaving ? "animate-slide-out-down" : "animate-slide-in-up"
+      )}
+      role="alert"
+      aria-live="assertive"
     >
-      <div className={`rounded-md p-4 shadow-lg border-l-4 ${bgColor} ${borderColor}`}>
+      <div className={cn("rounded-md p-4 shadow-lg border-l-4", bgColor, borderColor)}>
         <div className="flex items-start">
           <div className="flex-shrink-0">{icon}</div>
           <div className="ml-3 w-0 flex-1">
-            {title && <h3 className={`text-sm font-medium ${textColor}`}>{title}</h3>}
-            <div className={`mt-1 text-sm ${textColor}`}>{message}</div>
+            {title && <h3 className={cn("text-sm font-medium", textColor)}>{title}</h3>}
+            <div className={cn("mt-1 text-sm", textColor)}>{message}</div>
           </div>
           <div className="ml-4 flex-shrink-0 flex">
             <button
               onClick={handleClose}
-              className={`rounded-md inline-flex ${textColor} hover:${textColor} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary`}
+              className={cn(
+                "rounded-md inline-flex", 
+                textColor,
+                `hover:${textColor}`,
+                "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              )}
+              aria-label="Close notification"
             >
               <span className="sr-only">Close</span>
               <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

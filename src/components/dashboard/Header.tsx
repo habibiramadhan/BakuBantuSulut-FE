@@ -1,18 +1,14 @@
 // src/components/dashboard/Header.tsx
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
-import { logout, getUser } from '@/services/auth';
-import { Button } from '@/components/ui/Button';
-import { useToast } from '@/contexts/ToastContext';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Header = () => {
-  const router = useRouter();
+  const { user, logout } = useAuth();
   const pathname = usePathname();
-  const toast = useToast();
-  const [user, setUser] = useState<any>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([
@@ -38,17 +34,6 @@ const Header = () => {
       read: true
     }
   ]);
-
-  useEffect(() => {
-    const userData = getUser();
-    setUser(userData);
-  }, []);
-
-  const handleLogout = () => {
-    logout();
-    toast.success('Berhasil keluar dari sistem');
-    router.push('/login');
-  };
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -198,7 +183,7 @@ const Header = () => {
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => {
                       setIsMenuOpen(false);
-                      handleLogout();
+                      logout();
                     }}
                   >
                     Keluar

@@ -1,7 +1,7 @@
 // src/components/DonationChart.tsx
 import React from 'react';
 import { Pie } from 'recharts';
-import { PieChart, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface DonationChartProps {
   className?: string;

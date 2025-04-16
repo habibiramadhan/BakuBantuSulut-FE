@@ -1,10 +1,6 @@
 // src/components/ui/Checkbox.tsx
 import { InputHTMLAttributes, forwardRef } from 'react';
-
-// Helper function that will always return a string
-const cn = (...classes: (string | boolean | undefined)[]) => {
-  return classes.filter(cls => typeof cls === 'string' && cls).join(' ');
-};
+import { cn } from '@/lib/utils';
 
 export interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -27,7 +23,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               "h-4 w-4 rounded border-gray-300 text-babyBlue-dark focus:ring-babyBlue transition-colors",
               error ? "border-red-500 focus:ring-red-500" : "",
               props.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
-              className || ""
+              className
             )}
             {...props}
           />

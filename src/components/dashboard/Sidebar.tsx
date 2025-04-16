@@ -1,7 +1,6 @@
 // src/components/dashboard/Sidebar.tsx
 "use client";
 
-
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -12,11 +11,11 @@ interface SidebarProps {
 }
 
 interface NavItem {
-    name: string;
-    href: string;
-    icon: React.ReactNode; // Use this instead of JSX.Element
-    roles: string[];
-  }
+  name: string;
+  href: string;
+  icon: React.ReactNode;
+  roles: string[];
+}
 
 const Sidebar = ({ userRole = 'ADMIN' }: SidebarProps) => {
   const pathname = usePathname();
@@ -32,7 +31,8 @@ const Sidebar = ({ userRole = 'ADMIN' }: SidebarProps) => {
       href: '/dashboard',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+          <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
+          <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
         </svg>
       ),
       roles: ['ADMIN', 'SUPERADMIN'],
@@ -105,9 +105,9 @@ const Sidebar = ({ userRole = 'ADMIN' }: SidebarProps) => {
   const filteredNavigation = navigation.filter(item => item.roles.includes(userRole));
 
   return (
-    <div
+    <aside
       className={cn(
-        "bg-white fixed left-0 h-screen overflow-y-auto border-r border-gray-200 transition-all duration-300",
+        "bg-white fixed left-0 h-screen overflow-y-auto border-r border-gray-200 transition-all duration-300 z-20",
         collapsed ? "w-20" : "w-64"
       )}
     >
@@ -120,6 +120,7 @@ const Sidebar = ({ userRole = 'ADMIN' }: SidebarProps) => {
         <button 
           onClick={toggleSidebar} 
           className="rounded-full p-1 hover:bg-gray-100"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? (
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -133,7 +134,7 @@ const Sidebar = ({ userRole = 'ADMIN' }: SidebarProps) => {
         </button>
       </div>
 
-      <div className="p-4">
+      <nav className="p-4">
         <ul className="space-y-2">
           {filteredNavigation.map((item) => {
             const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
@@ -150,15 +151,15 @@ const Sidebar = ({ userRole = 'ADMIN' }: SidebarProps) => {
                     collapsed && "justify-center px-2"
                   )}
                 >
-                  <span className="mr-3">{item.icon}</span>
+                  <span className={collapsed ? "" : "mr-3"}>{item.icon}</span>
                   {!collapsed && <span>{item.name}</span>}
                 </Link>
               </li>
             );
           })}
         </ul>
-      </div>
-    </div>
+      </nav>
+    </aside>
   );
 };
 

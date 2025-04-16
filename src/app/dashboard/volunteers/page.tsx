@@ -4,7 +4,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import Link from 'next/link';
 
 interface Volunteer {
   id: string;
@@ -19,7 +18,7 @@ interface Volunteer {
 
 export default function VolunteersPage() {
   // Mock data - in a real app, this would come from an API
-  const [volunteers, setVolunteers] = useState<Volunteer[]>([
+  const [volunteers] = useState<Volunteer[]>([
     {
       id: '1',
       name: 'Ahmad Fauzi',

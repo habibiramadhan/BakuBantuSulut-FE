@@ -3,8 +3,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { Header, Footer, CallToAction } from '@/components/common';
+import { Header, Footer} from '@/components/common';
 import { Button } from '@/components/ui/Button';
 
 // Hero Section Component with enhanced styling
@@ -153,7 +152,7 @@ const MissionVision = () => {
                 Kami bercita-cita menjadi katalisator dampak sosial yang penuh arti dan efektif di Sulawesi Utara, dengan pendekatan berbasis data dan berlandaskan empati.
               </p>
               <p className="text-gray-600 border-l-2 border-lavender-light pl-4">
-                "Sitou timou tumou tou" menjadi pendorong kami untuk percaya bahwa manusia diciptakan untuk hidup berdampingan dan saling membantu.
+                &ldquo;Sitou timou tumou tou&rdquo; menjadi pendorong kami untuk percaya bahwa manusia diciptakan untuk hidup berdampingan dan saling membantu.
               </p>
             </div>
           </div>

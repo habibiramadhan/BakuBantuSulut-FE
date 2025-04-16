@@ -1,5 +1,6 @@
 // src/components/ui/Loading.tsx
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface LoadingProps {
   size?: 'xs' | 'sm' | 'md' | 'lg';
@@ -9,7 +10,7 @@ interface LoadingProps {
   fullScreen?: boolean;
 }
 
-const Loading = ({ 
+export const Loading = ({ 
   size = 'md', 
   color = 'primary', 
   text, 
@@ -39,23 +40,25 @@ const Loading = ({
     white: 'text-white',
   };
 
-  const containerClasses = [
-    "flex flex-col items-center justify-center",
-    center && "mx-auto",
-    fullScreen && "fixed inset-0 bg-white/80 backdrop-blur-sm z-50"
-  ].filter(Boolean).join(" ");
-
   return (
-    <div className={containerClasses}>
+    <div className={cn(
+      "flex flex-col items-center justify-center",
+      center && "mx-auto",
+      fullScreen && "fixed inset-0 bg-white/80 backdrop-blur-sm z-50"
+    )}>
       <div
-        className={`rounded-full border-solid animate-spin ${sizeClasses[size]} ${colorClasses[color]}`}
+        className={cn(
+          "rounded-full border-solid animate-spin",
+          sizeClasses[size],
+          colorClasses[color]
+        )}
         aria-hidden="true"
       />
       {text && (
-        <p className={`mt-3 text-sm font-medium ${textColors[color]}`}>{text}</p>
+        <p className={cn("mt-3 text-sm font-medium", textColors[color])}>
+          {text}
+        </p>
       )}
     </div>
   );
 };
-
-export { Loading };

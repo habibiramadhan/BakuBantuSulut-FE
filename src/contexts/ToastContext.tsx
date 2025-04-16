@@ -94,6 +94,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
               message={toast.message}
               onClose={() => dismissToast(toast.id)}
               isVisible={true}
+              duration={toast.duration}
             />
           ))}
         </div>

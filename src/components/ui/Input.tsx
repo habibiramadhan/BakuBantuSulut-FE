@@ -1,10 +1,6 @@
 // src/components/ui/Input.tsx
 import { InputHTMLAttributes, ReactNode, forwardRef, useState } from 'react';
-
-// Helper function that will always return a string
-const cn = (...classes: (string | boolean | undefined)[]) => {
-  return classes.filter(cls => typeof cls === 'string' && cls).join(' ');
-};
+import { cn } from '@/lib/utils';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -64,7 +60,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 : "border-gray-300 focus:border-babyBlue focus:ring-1 focus:ring-babyBlue",
               leftIcon ? "pl-10" : "",
               (rightIcon || showPasswordToggle) ? "pr-10" : "",
-              className || ""
+              className
             )}
             {...props}
           />
