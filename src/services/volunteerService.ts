@@ -24,7 +24,6 @@ export interface VolunteerResponse {
   email: string;
   wilayahId: string;
   profileImage?: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
   createdAt: string;
   updatedAt: string;
 }
@@ -45,7 +44,7 @@ export async function registerVolunteer(formData: VolunteerFormData): Promise<Ap
     
     // Add all fields to FormData
     Object.entries(formData).forEach(([key, value]) => {
-      if (key === 'profile_picture' && value instanceof File) {
+      if (key === 'profileImage' && value instanceof File) {
         apiFormData.append(key, value);
       } else if (value !== null && value !== undefined) {
         apiFormData.append(key, String(value));

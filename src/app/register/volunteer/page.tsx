@@ -43,7 +43,7 @@ export default function VolunteerRegistrationPage() {
     nomorHP: '',
     email: '',
     wilayahId: '',
-    profile_picture: null
+    profileImage: null
   });
   
   // Mengambil data wilayah ketika komponen dimuat
@@ -93,14 +93,14 @@ export default function VolunteerRegistrationPage() {
       if (error) {
         setErrors(prev => ({
           ...prev,
-          profile_picture: error
+          profileImage: error
         }));
         return;
       }
       
       setFormData(prev => ({
         ...prev,
-        profile_picture: file
+        profileImage: file
       }));
       
       // Create preview URL
@@ -113,13 +113,13 @@ export default function VolunteerRegistrationPage() {
       // Clear error
       setErrors(prev => ({
         ...prev,
-        profile_picture: undefined
+        profileImage: undefined
       }));
     } else {
       // Jika file dihapus
       setFormData(prev => ({
         ...prev,
-        profile_picture: null
+        profileImage: null
       }));
       setPreviewUrl(null);
     }
@@ -164,11 +164,11 @@ export default function VolunteerRegistrationPage() {
       return;
     }
     
-    const profilePictureError = validateProfilePicture(formData.profile_picture);
+    const profilePictureError = validateProfilePicture(formData.profileImage);
     if (profilePictureError) {
       setErrors(prev => ({
         ...prev,
-        profile_picture: profilePictureError
+        profileImage: profilePictureError
       }));
       toast.error(profilePictureError);
       return;

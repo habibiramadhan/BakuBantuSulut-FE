@@ -13,7 +13,7 @@ export interface VolunteerFormData {
     nomorHP: string;
     email: string;
     wilayahId: string;
-    profile_picture?: File | null;
+    profileImage?: File | null;
   }
   
   // Fungsi untuk validasi formulir step 1
@@ -97,7 +97,7 @@ export interface VolunteerFormData {
   export const validateVolunteerForm = (formData: VolunteerFormData) => {
     const step1Errors = validateStep1(formData);
     const step2Errors = validateStep2(formData);
-    const profilePictureError = validateProfilePicture(formData.profile_picture);
+    const profilePictureError = validateProfilePicture(formData.profileImage);
     
     const errors: Partial<Record<keyof VolunteerFormData, string>> = {
       ...step1Errors,
@@ -105,7 +105,7 @@ export interface VolunteerFormData {
     };
     
     if (profilePictureError) {
-      errors.profile_picture = profilePictureError;
+      errors.profileImage = profilePictureError;
     }
     
     return errors;

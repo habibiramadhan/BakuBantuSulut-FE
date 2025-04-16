@@ -8,11 +8,11 @@
  * Base API configuration including endpoints and common headers
  */
 export const API_CONFIG = {
-    baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://baku-bantu.vercel.app',
+    baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     endpoints: {
       volunteers: {
         register: '/volunteers/register',
-        getWilayah: '/wilayah'
+        getWilayah: '/wilayah/active'
       }
     },
     headers: {
