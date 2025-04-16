@@ -19,7 +19,7 @@ const HeroSection = () => {
             Bersama Kita Bantu, Bersama Kita Tumbuh
           </h1>
           <div className="flex flex-wrap gap-4 mt-8">
-            <Link href="#what-we-do">
+            <Link href="what-we-do">
               <Button variant="primary" size="lg">Apa yang Kami Lakukan</Button>
             </Link>
           </div>

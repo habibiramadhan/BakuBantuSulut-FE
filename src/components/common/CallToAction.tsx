@@ -1,5 +1,6 @@
 // src/components/common/CallToAction.tsx
 import React from 'react';
+import Link from 'next/link';
 
 const CallToAction = () => {
   return (
@@ -13,12 +14,16 @@ const CallToAction = () => {
               Supaya ngoni boleh bantu yang laeng!
             </h2>
             <div className="flex flex-wrap justify-center gap-6">
-              <button className="bg-mango hover:bg-mango-dark text-black px-8 py-3 rounded-md font-medium transition-colors">
-                Bergabung sebagai Relawan
-              </button>
-              <button className="bg-white hover:bg-gray-100 text-black px-8 py-3 rounded-md font-medium transition-colors">
-                donasi
-              </button>
+              <Link href="/volunteer">
+                <button className="bg-mango hover:bg-mango-dark text-black px-8 py-3 rounded-md font-medium transition-colors">
+                  Bergabung sebagai Relawan
+                </button>
+              </Link>
+              <Link href="/donate">
+                <button className="bg-white hover:bg-gray-100 text-black px-8 py-3 rounded-md font-medium transition-colors">
+                  Donasi
+                </button>
+              </Link>
             </div>
           </div>
         </div>
