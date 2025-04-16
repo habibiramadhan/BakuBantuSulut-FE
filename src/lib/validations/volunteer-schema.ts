@@ -9,7 +9,7 @@ export interface VolunteerFormData {
     tempatLahir: string;
     tanggalLahir: string;
     alamatDomisili: string;
-    kewarganegaraan: 'WNI' | 'WNA';
+    kewarganegaraan: string; // Changed from enum to string to match API
     nomorHP: string;
     email: string;
     wilayahId: string;

@@ -1,26 +1,68 @@
 // src/app/volunteer/success/page.tsx
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { Header, Footer } from '@/components/common';
+import { useToast } from '@/contexts/ToastContext';
+import { checkRegistrationStatus, VolunteerResponse } from '@/services/volunteerService';
 
 export default function VolunteerSuccessPage() {
   const router = useRouter();
+  const toast = useToast();
+  const [volunteerData, setVolunteerData] = useState<VolunteerResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Redirect ke halaman utama jika user langsung akses halaman ini tanpa melalui form
+  // Fade in animation for content
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
+
+  // Redirect to registration page if user accesses this page directly
   useEffect(() => {
-    // Ideally we would check for actual registration state here
-    // For demo purposes, we're just adding a simulated check
     const hasRegistered = sessionStorage.getItem('volunteer_registered');
+    const volunteerId = sessionStorage.getItem('volunteer_id');
+    
     if (!hasRegistered) {
-      // For demo, uncomment this to enforce flow:
+      // Uncomment this for production use to enforce the correct user flow
       // router.push('/register/volunteer');
+      // return;
+    }
+
+    // If we have a volunteer ID, fetch the registration details
+    if (volunteerId) {
+      fetchVolunteerData(volunteerId);
+    } else {
+      setIsLoading(false);
     }
   }, [router]);
+
+  // Fetch volunteer data from API
+  const fetchVolunteerData = async (id: string) => {
+    try {
+      setIsLoading(true);
+      const response = await checkRegistrationStatus(id);
+      
+      if (response.success && response.data) {
+        setVolunteerData(response.data);
+      } else {
+        toast.error(response.message || 'Gagal mengambil data pendaftaran');
+      }
+    } catch (error) {
+      console.error('Error fetching volunteer data:', error);
+      toast.error('Terjadi kesalahan saat mengambil data pendaftaran');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -28,7 +70,12 @@ export default function VolunteerSuccessPage() {
       <main>
         <section className="py-20">
           <div className="container mx-auto px-6">
-            <div className="max-w-3xl mx-auto text-center">
+            <motion.div 
+              className="max-w-3xl mx-auto text-center"
+              initial="hidden"
+              animate="visible"
+              variants={fadeIn}
+            >
               <div className="mb-10 inline-flex justify-center">
                 <div className="rounded-full bg-green-100 p-6">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-green-600" viewBox="0 0 20 20" fill="currentColor">
@@ -45,6 +92,58 @@ export default function VolunteerSuccessPage() {
                 <p className="text-lg text-gray-600 mb-6">
                   Terima kasih telah mendaftar sebagai relawan BakuBantu. Kami sangat menghargai kesediaan Anda untuk bergabung dengan misi kami membantu mereka yang membutuhkan.
                 </p>
+
+                {volunteerData && (
+                  <div className="bg-babyBlue-light/20 p-6 rounded-lg text-left mb-8">
+                    <h2 className="text-lg font-semibold text-babyBlue-dark mb-3">Detail Pendaftaran:</h2>
+                    <ul className="space-y-3">
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-babyBlue-dark mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clipRule="evenodd" />
+                        </svg>
+                        <div>
+                          <span className="font-medium">Nama:</span> {volunteerData.namaLengkap}
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-babyBlue-dark mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                          <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                        </svg>
+                        <div>
+                          <span className="font-medium">Email:</span> {volunteerData.email}
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-babyBlue-dark mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                        </svg>
+                        <div>
+                          <span className="font-medium">Nomor HP:</span> {volunteerData.nomorHP}
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-babyBlue-dark mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                        </svg>
+                        <div>
+                          <span className="font-medium">Status:</span>{' '}
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            {volunteerData.status === 'PENDING' ? 'Menunggu Persetujuan' : volunteerData.status}
+                          </span>
+                        </div>
+                      </li>
+                      <li className="flex items-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-babyBlue-dark mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                        </svg>
+                        <div>
+                          <span className="font-medium">ID Pendaftaran:</span> {volunteerData.id}
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                )}
 
                 <div className="bg-blue-50 p-6 rounded-lg text-left mb-8">
                   <h2 className="text-lg font-semibold text-blue-800 mb-3">Langkah Selanjutnya:</h2>
@@ -111,7 +210,23 @@ export default function VolunteerSuccessPage() {
                   </Button>
                 </Link>
               </div>
-            </div>
+              
+              {/* Clean up session storage to prevent access after leaving */}
+              <div className="hidden">
+                {/* Use useEffect for side effects instead of directly in JSX */}
+                {(() => {
+                  useEffect(() => {
+                    // This runs on component mount
+                    return () => {
+                      // This runs on component unmount
+                      sessionStorage.removeItem('volunteer_registered');
+                      sessionStorage.removeItem('volunteer_id');
+                    };
+                  }, []);
+                  return null;
+                })()}
+              </div>
+            </motion.div>
           </div>
         </section>
       </main>
