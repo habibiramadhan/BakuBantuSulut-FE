@@ -10,10 +10,15 @@ import { Header, Footer } from '@/components/common';
 import { useToast } from '@/contexts/ToastContext';
 import { checkRegistrationStatus, VolunteerResponse } from '@/services/volunteerService';
 
+// Tambahkan status ke interface VolunteerResponse
+interface VolunteerResponseWithStatus extends VolunteerResponse {
+  status: string;
+}
+
 export default function VolunteerSuccessPage() {
   const router = useRouter();
   const toast = useToast();
-  const [volunteerData, setVolunteerData] = useState<VolunteerResponse | null>(null);
+  const [volunteerData, setVolunteerData] = useState<VolunteerResponseWithStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fade in animation for content
@@ -52,7 +57,8 @@ export default function VolunteerSuccessPage() {
       const response = await checkRegistrationStatus(id);
       
       if (response.success && response.data) {
-        setVolunteerData(response.data);
+        // Cast response data to include status
+        setVolunteerData(response.data as VolunteerResponseWithStatus);
       } else {
         toast.error(response.message || 'Gagal mengambil data pendaftaran');
       }
