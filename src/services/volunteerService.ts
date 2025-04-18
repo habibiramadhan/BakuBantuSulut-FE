@@ -22,15 +22,23 @@ export interface VolunteerResponse {
   kewarganegaraan: string;
   nomorHP: string;
   email: string;
-  wilayahId: string;
+  wilayahId: string | number;
   profileImage?: string;
+  jabatan?: string;
+  status?: string;
   createdAt: string;
   updatedAt: string;
+  wilayah?: Wilayah;
 }
 
 export interface Wilayah {
-  id: string;
+  id: string | number;
   nama: string;
+}
+
+export interface ActiveVolunteersResponse {
+  message: string;
+  data: VolunteerResponse[];
 }
 
 /**
@@ -109,6 +117,39 @@ export async function getWilayahList(): Promise<ApiResponse<Wilayah[]>> {
     return {
       success: false,
       message: error instanceof Error ? error.message : 'Failed to fetch wilayah list',
+      data: []
+    };
+  }
+}
+
+/**
+ * Get list of active volunteers
+ * Uses the same fetchApi utility as other API calls for consistency
+ */
+export async function getActiveVolunteers(): Promise<ApiResponse<VolunteerResponse[]>> {
+  try {
+    // Update API_CONFIG with active volunteers endpoint if not already defined
+    const endpoint = API_CONFIG.endpoints.volunteers.active || '/volunteers/active';
+    
+    const response = await fetchApi<ActiveVolunteersResponse>(endpoint);
+    
+    return {
+      success: true,
+      message: response.message || 'Active volunteers fetched successfully',
+      data: response.data
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return {
+        success: false,
+        message: error.message,
+        errors: error.data?.errors
+      };
+    }
+    
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to fetch active volunteers',
       data: []
     };
   }

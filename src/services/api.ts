@@ -12,7 +12,8 @@ export const API_CONFIG = {
     endpoints: {
       volunteers: {
         register: '/volunteers/register',
-        getWilayah: '/wilayah/active'
+        getWilayah: '/wilayah/active',
+        active: '/volunteers/active' 
       }
     },
     headers: {
