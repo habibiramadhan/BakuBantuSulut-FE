@@ -1,22 +1,22 @@
-// src/app/dashboard/layout.tsx
+// src/components/layouts/DashboardLayout.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated, getUser } from '@/services/auth';
-import { DashboardHeader, DashboardSidebar } from '@/components/pages/dashboard';
+import DashboardHeader from '@/components/pages/dashboard/DashboardHeader';
+import DashboardSidebar from '@/components/pages/dashboard/DashboardSidebar';
 import { Loading } from '@/components/ui/Loading';
 
-export default function DashboardLayout({
-  children,
-}: {
+interface DashboardLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -27,22 +27,6 @@ export default function DashboardLayout({
       setUser(userData);
       setLoading(false);
     }
-    
-    // Check if device is mobile
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-      // On larger screens, default to open sidebar
-      if (window.innerWidth >= 768) {
-        setSidebarOpen(true);
-      }
-    };
-    
-    // Initial check
-    checkIfMobile();
-    
-    // Listen for resize events
-    window.addEventListener('resize', checkIfMobile);
-    return () => window.removeEventListener('resize', checkIfMobile);
   }, [router]);
 
   const toggleSidebar = () => {
@@ -70,20 +54,12 @@ export default function DashboardLayout({
           isOpen={sidebarOpen} 
           toggleSidebar={toggleSidebar} 
         />
-        <main 
-          className={`
-            flex-1 transition-all duration-300 p-4 md:p-6
-            ${isMobile 
-              ? '' 
-              : sidebarOpen 
-                ? 'md:ml-64' 
-                : 'md:ml-20'
-            }
-          `}
-        >
+        <main className={`flex-1 transition-all duration-300 p-4 md:p-6 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
           {children}
         </main>
       </div>
     </div>
   );
-}
+};
+
+export default DashboardLayout;
