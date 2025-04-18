@@ -40,6 +40,8 @@ const Step2ContactInfo = ({
     }
   };
 
+
+
   return (
     <motion.div 
       className="space-y-6"

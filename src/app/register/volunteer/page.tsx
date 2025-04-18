@@ -7,7 +7,13 @@ import Link from 'next/link';
 import { AnimatePresence } from 'framer-motion';
 import { useToast } from '@/contexts/ToastContext';
 import AuthLayout from '@/components/layouts/AuthLayout';
-import { VolunteerFormData, validateStep1, validateStep2, validateProfilePicture } from '@/lib/validations/volunteer-schema';
+import { 
+  VolunteerFormData, 
+  validateStep1, 
+  validateStep2, 
+  validateProfilePicture,
+  prepareFormDataForSubmission
+} from '@/lib/validations/volunteer-schema';
 import { registerVolunteer, getWilayahList, Wilayah } from '@/services/volunteerService';
 
 // Import step components
@@ -33,26 +39,28 @@ export default function VolunteerRegistrationPage() {
   const [wilayahList, setWilayahList] = useState<Wilayah[]>([]);
   const [isLoadingWilayah, setIsLoadingWilayah] = useState(true);
   const [errors, setErrors] = useState<Partial<Record<keyof VolunteerFormData, string>>>({});
-  const [retryCount, setRetryCount] = useState(0); // Menambahkan state untuk menghitung retry
+  const [retryCount, setRetryCount] = useState(0);
+  
+  // Initialize form data with wilayahId as number (empty/null initially)
   const [formData, setFormData] = useState<VolunteerFormData>({
     namaLengkap: '',
     jenisKelamin: 'MALE',
     tempatLahir: '',
     tanggalLahir: '',
-    alamatDomisili: '',
+    alamatDomisili: '', 
     kewarganegaraan: 'INDONESIA',
     nomorHP: '',
     email: '',
-    wilayahId: '',
+    wilayahId: '', // Start with empty string, will be converted to number before submission
     profileImage: null
   });
-  
-  // Mengambil data wilayah ketika komponen dimuat
+
+  // Fetch wilayah data when component mounts
   useEffect(() => {
     let isMounted = true;
 
     async function fetchWilayah() {
-      if (!isMounted || retryCount >= 2) return; // Cek jumlah retry
+      if (!isMounted || retryCount >= 2) return;
       
       setIsLoadingWilayah(true);
       try {
@@ -63,13 +71,13 @@ export default function VolunteerRegistrationPage() {
           setWilayahList(response.data);
         } else {
           toast.error(response.message || 'Gagal mengambil data wilayah');
-          setRetryCount(prev => prev + 1); // Increment retry counter
+          setRetryCount(prev => prev + 1);
         }
       } catch (error) {
         if (!isMounted) return;
         toast.error('Terjadi kesalahan saat memuat data wilayah');
         console.error('Error fetching wilayah:', error);
-        setRetryCount(prev => prev + 1); // Increment retry counter
+        setRetryCount(prev => prev + 1);
       } finally {
         if (isMounted) {
           setIsLoadingWilayah(false);
@@ -82,15 +90,24 @@ export default function VolunteerRegistrationPage() {
     return () => {
       isMounted = false;
     };
-  }, [toast, retryCount]); // Tambahkan retryCount ke dependencies
+  }, [toast, retryCount]);
 
-  // Handler untuk perubahan input
+  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // Handle special case for wilayahId to ensure it's stored as a number
+    if (name === 'wilayahId') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value // Keep as string in the form, but convert before API call
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
     
     // Clear error when field is edited
     if (errors[name as keyof VolunteerFormData]) {
@@ -101,7 +118,7 @@ export default function VolunteerRegistrationPage() {
     }
   };
   
-  // Handler untuk unggah foto profil
+  // Handle file upload
   const handleFileUpload = (file: File | null) => {
     if (file) {
       const error = validateProfilePicture(file);
@@ -132,7 +149,7 @@ export default function VolunteerRegistrationPage() {
         profileImage: undefined
       }));
     } else {
-      // Jika file dihapus
+      // If file is removed
       setFormData(prev => ({
         ...prev,
         profileImage: null
@@ -141,7 +158,7 @@ export default function VolunteerRegistrationPage() {
     }
   };
   
-  // Validasi form
+  // Validate form step
   const validateStep = (step: number): boolean => {
     let newErrors = {};
     
@@ -155,7 +172,7 @@ export default function VolunteerRegistrationPage() {
     return Object.keys(newErrors).length === 0;
   };
   
-  // Handler untuk tombol next step
+  // Handle next step
   const handleNextStep = () => {
     if (validateStep(currentStep)) {
       setCurrentStep(prev => prev + 1);
@@ -165,13 +182,13 @@ export default function VolunteerRegistrationPage() {
     }
   };
   
-  // Handler untuk tombol previous step
+  // Handle previous step
   const handlePrevStep = () => {
     setCurrentStep(prev => prev - 1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
-  // Handler untuk submit form
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -193,14 +210,17 @@ export default function VolunteerRegistrationPage() {
     setIsSubmitting(true);
     
     try {
-      // Kirim data ke API
-      const response = await registerVolunteer(formData);
+      // Prepare form data - ensure wilayahId is a number
+      const processedFormData = prepareFormDataForSubmission(formData) as VolunteerFormData;
+      
+      // Send data to API
+      const response = await registerVolunteer(processedFormData);
       
       if (response.success) {
-        // Tampilkan animasi sukses
+        // Show success animation
         setShowSuccessAnimation(true);
         
-        // Set session storage untuk halaman success
+        // Set session storage for success page
         sessionStorage.setItem('volunteer_registered', 'true');
         if (response.data?.id) {
           sessionStorage.setItem('volunteer_id', response.data.id);
@@ -208,12 +228,12 @@ export default function VolunteerRegistrationPage() {
         
         toast.success(response.message || 'Pendaftaran relawan berhasil! Silakan tunggu konfirmasi dari admin.');
         
-        // Redirect ke halaman sukses dengan delay untuk menampilkan animasi
+        // Redirect to success page with delay to show animation
         setTimeout(() => {
           router.push('/volunteer/success');
         }, 2000);
       } else {
-        // Handle error dari API
+        // Handle API errors
         if (response.errors) {
           setErrors(response.errors);
         }
@@ -228,7 +248,7 @@ export default function VolunteerRegistrationPage() {
     }
   };
 
-  // Render the current step based on state
+  // Render current step
   const renderCurrentStep = () => {
     switch(currentStep) {
       case 1:
@@ -278,7 +298,7 @@ export default function VolunteerRegistrationPage() {
       imageSrc="/images/logo_kecil_01.png"
       imageAlt="Relawan BakuBantu"
     >
-      {/* Animasi sukses */}
+      {/* Success animation */}
       <AnimatePresence>
         {showSuccessAnimation && <SuccessAnimation />}
       </AnimatePresence>

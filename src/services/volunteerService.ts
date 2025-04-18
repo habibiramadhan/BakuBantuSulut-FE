@@ -1,6 +1,6 @@
 // src/services/volunteerService.ts
 import { fetchApi, API_CONFIG, ApiError } from './api';
-import { VolunteerFormData } from '@/lib/validations/volunteer-schema';
+import { VolunteerFormData, prepareFormDataForSubmission } from '@/lib/validations/volunteer-schema';
 
 /**
  * Types for API responses
@@ -22,7 +22,7 @@ export interface VolunteerResponse {
   kewarganegaraan: string;
   nomorHP: string;
   email: string;
-  wilayahId: string | number;
+  wilayahId: number; // Changed to number to match database
   profileImage?: string;
   jabatan?: string;
   status?: string;
@@ -32,7 +32,7 @@ export interface VolunteerResponse {
 }
 
 export interface Wilayah {
-  id: string | number;
+  id: number; // Changed to number to match database
   nama: string;
 }
 
@@ -50,12 +50,20 @@ export async function registerVolunteer(formData: VolunteerFormData): Promise<Ap
     // Create FormData object for file uploads
     const apiFormData = new FormData();
     
+    // Process the form data to ensure proper types
+    const processedData = prepareFormDataForSubmission(formData);
+    
     // Add all fields to FormData
-    Object.entries(formData).forEach(([key, value]) => {
+    Object.entries(processedData).forEach(([key, value]) => {
       if (key === 'profileImage' && value instanceof File) {
         apiFormData.append(key, value);
       } else if (value !== null && value !== undefined) {
-        apiFormData.append(key, String(value));
+        // Convert wilayahId to string explicitly for FormData
+        if (key === 'wilayahId') {
+          apiFormData.append(key, String(value));
+        } else {
+          apiFormData.append(key, String(value));
+        }
       }
     });
     
