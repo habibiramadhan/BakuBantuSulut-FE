@@ -1,4 +1,6 @@
 // src/services/auth.ts
+import { authApi } from '@/services/api/auth-api';
+
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -6,14 +8,15 @@ export interface LoginCredentials {
 
 export interface User {
   id: string;
-  username: string;
   email: string;
-  profileImage: string | null;
   role: 'ADMIN' | 'SUPERADMIN';
+  status: string;
+  username?: string;
+  profileImage?: string | null;
   region?: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string | null;
 }
 
 export interface LoginResponse {
@@ -24,57 +27,25 @@ export interface LoginResponse {
   };
 }
 
-// Mock login function for development
+/**
+ * Login function using the real API
+ * @param credentials Email and password
+ * @returns Promise with login response
+ */
 export async function login(credentials: LoginCredentials): Promise<LoginResponse> {
-  // In production, this would be an API call
-  return new Promise((resolve, reject) => {
-    // Simulate network delay
-    setTimeout(() => {
-      // Simulate authentication
-      if (credentials.email === 'admin@bakubantu.id' && credentials.password === 'password123') {
-        const response: LoginResponse = {
-          message: 'Login successful',
-          data: {
-            user: {
-              id: '1',
-              username: 'Admin',
-              email: 'admin@bakubantu.id',
-              profileImage: null,
-              role: 'ADMIN',
-              region: 'DKI Jakarta',
-              createdAt: '2025-01-01T00:00:00.000Z',
-              updatedAt: '2025-01-01T00:00:00.000Z',
-              createdBy: null
-            },
-            token: 'mock-jwt-token-for-admin'
-          }
-        };
-        resolve(response);
-      } else if (credentials.email === 'superadmin@bakubantu.id' && credentials.password === 'password123') {
-        const response: LoginResponse = {
-          message: 'Login successful',
-          data: {
-            user: {
-              id: '2',
-              username: 'Super Admin',
-              email: 'superadmin@bakubantu.id',
-              profileImage: null,
-              role: 'SUPERADMIN',
-              createdAt: '2025-01-01T00:00:00.000Z',
-              updatedAt: '2025-01-01T00:00:00.000Z',
-              createdBy: null
-            },
-            token: 'mock-jwt-token-for-superadmin'
-          }
-        };
-        resolve(response);
-      } else {
-        reject(new Error('Email atau password salah. Silakan coba lagi.'));
-      }
-    }, 1000);
-  });
+  try {
+    return await authApi.login(credentials);
+  } catch (error: any) {
+    console.error('Login error:', error);
+    // Extract error message from API response if available
+    const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
+    throw new Error(errorMessage);
+  }
 }
 
+/**
+ * Logout function - clears all authentication data
+ */
 export function logout(): void {
   // Clear localStorage
   localStorage.removeItem('auth_token');
@@ -84,6 +55,10 @@ export function logout(): void {
   document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict';
 }
 
+/**
+ * Check if user is authenticated
+ * @returns boolean indicating authentication status
+ */
 export function isAuthenticated(): boolean {
   // Check if we're in a browser environment
   if (typeof window === 'undefined') {
@@ -92,6 +67,10 @@ export function isAuthenticated(): boolean {
   return !!localStorage.getItem('auth_token');
 }
 
+/**
+ * Get authentication token
+ * @returns string | null
+ */
 export function getToken(): string | null {
   // Check if we're in a browser environment
   if (typeof window === 'undefined') {
@@ -100,6 +79,10 @@ export function getToken(): string | null {
   return localStorage.getItem('auth_token');
 }
 
+/**
+ * Get user data from localStorage
+ * @returns User | null
+ */
 export function getUser(): User | null {
   // Check if we're in a browser environment
   if (typeof window === 'undefined') {
@@ -116,6 +99,11 @@ export function getUser(): User | null {
   }
 }
 
+/**
+ * Set authentication data in localStorage and cookies
+ * @param token JWT token
+ * @param user User data
+ */
 export function setAuthData(token: string, user: User): void {
   // Store in localStorage for client-side access
   localStorage.setItem('auth_token', token);
@@ -125,6 +113,11 @@ export function setAuthData(token: string, user: User): void {
   document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Strict`;
 }
 
+/**
+ * Check if user has required permission
+ * @param requiredRole ADMIN or SUPERADMIN
+ * @returns boolean
+ */
 export function hasPermission(requiredRole: 'ADMIN' | 'SUPERADMIN'): boolean {
   const user = getUser();
   if (!user) return false;

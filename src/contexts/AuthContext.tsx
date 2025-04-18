@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { useRouter, usePathname } from 'next/navigation';
 import { User, getUser, isAuthenticated, logout as logoutService } from '@/services/auth';
 import { useToast } from './ToastContext';
+import { Loading } from '@/components/ui/Loading';
 
 interface AuthContextType {
   user: User | null;
@@ -25,10 +26,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const toast = useToast();
 
+  // Check authentication on mount and path changes
   useEffect(() => {
-    // Check if user is authenticated on mount
     const checkAuth = () => {
       setIsLoading(true);
+      
       if (isAuthenticated()) {
         const userData = getUser();
         setUser(userData);
@@ -36,11 +38,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setUser(null);
         setAuthStatus(false);
+        
         // Redirect to login if accessing protected route
         if (pathname?.startsWith('/dashboard')) {
           router.push('/login');
         }
       }
+      
       setIsLoading(false);
     };
 
@@ -61,16 +65,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const handleLogout = () => {
-    // Clear localStorage
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_info');
+    // Use the logout service
+    logoutService();
     
-    // Clear the cookie
-    document.cookie = 'auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict';
-    
+    // Update state
     setUser(null);
     setAuthStatus(false);
-    toast.success('Berhasil keluar dari sistem');
+    
+    // Show success message
+    toast.success('You have been successfully logged out');
+    
+    // Redirect to login
     router.push('/login');
   };
 

@@ -1,25 +1,30 @@
 // src/app/login/page.tsx
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { SocialButton } from '@/components/ui/SocialButton';
 import AuthLayout from '@/components/layouts/AuthLayout';
-import { login, setAuthData, isAuthenticated } from '@/services/auth';
-import { useToast } from '@/contexts/ToastContext';
+import { isAuthenticated } from '@/services/auth';
+import { useLogin } from '@/hooks/useLogin';
 
 export default function LoginPage() {
   const router = useRouter();
-  const toast = useToast();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { isLoading, error, login, clearError } = useLogin();
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    rememberMe: false
+  });
+  
+  // UI state
   const [showDemo, setShowDemo] = useState(false);
   
   useEffect(() => {
@@ -29,55 +34,46 @@ export default function LoginPage() {
     }
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Clear error when inputs change
+  useEffect(() => {
+    if (error) {
+      clearError();
+    }
+  }, [formData.email, formData.password, error, clearError]);
+
+  // Handle input changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    // Basic validation
-    if (!email.trim()) {
-      setError('Email is required');
-      toast.error('Email is required');
-      setIsLoading(false);
-      return;
-    }
-
-    if (!password) {
-      setError('Password is required');
-      toast.error('Password is required');
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const response = await login({ email, password });
-      // Store auth data in localStorage
-      setAuthData(response.data.token, response.data.user);
-      
-      // Show success message
-      toast.success('Login successful!', 'Welcome back');
-      
+    
+    const success = await login({
+      email: formData.email,
+      password: formData.password
+    }, formData.rememberMe);
+    
+    if (success) {
       // Redirect to dashboard with a slight delay to show success
       setTimeout(() => {
         router.push('/dashboard');
       }, 1000);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Login failed. Please check your credentials and try again.';
-      setError(errorMessage);
-      toast.error(errorMessage, 'Authentication Error');
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const fillDemoCredentials = (role: 'admin' | 'superadmin') => {
-    if (role === 'admin') {
-      setEmail('admin@bakubantu.id');
-      setPassword('password123'); 
-    } else {
-      setEmail('superadmin@bakubantu.id');
-      setPassword('password123');
-    }
+  // Fill demo credentials
+  const fillDemoCredentials = (email: string, password: string) => {
+    setFormData(prev => ({
+      ...prev,
+      email,
+      password
+    }));
   };
 
   return (
@@ -102,8 +98,9 @@ export default function LoginPage() {
         <Input
           label="Email"
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
           placeholder="youremail@example.com"
           leftIcon={
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,8 +114,9 @@ export default function LoginPage() {
         <Input
           label="Password"
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
           placeholder="••••••••••••••••••••"
           leftIcon={
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -133,8 +131,9 @@ export default function LoginPage() {
         <div className="flex items-center justify-between">
           <Checkbox
             id="remember-me"
-            checked={rememberMe}
-            onChange={() => setRememberMe(!rememberMe)}
+            name="rememberMe"
+            checked={formData.rememberMe}
+            onChange={handleChange}
             label="Remember me"
             disabled={isLoading}
           />
@@ -149,7 +148,7 @@ export default function LoginPage() {
         {/* Demo Accounts */}
         <div className="bg-blue-50 p-4 rounded-md">
           <div className="flex justify-between items-center mb-2">
-            <h4 className="text-sm font-medium text-blue-800">Demo Accounts</h4>
+            <h4 className="text-sm font-medium text-blue-800">Demo Account</h4>
             <button
               type="button"
               className="text-xs text-blue-600 hover:text-blue-800"
@@ -162,28 +161,14 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-xs font-medium text-gray-700">Admin</p>
-                  <p className="text-xs text-gray-500">admin@bakubantu.id / password123</p>
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => fillDemoCredentials('admin')}
-                >
-                  Use
-                </Button>
-              </div>
-              <div className="flex justify-between items-center">
-                <div>
                   <p className="text-xs font-medium text-gray-700">Super Admin</p>
-                  <p className="text-xs text-gray-500">superadmin@bakubantu.id / password123</p>
+                  <p className="text-xs text-gray-500">hoka1@gmail.com / 1408Hoka</p>
                 </div>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => fillDemoCredentials('superadmin')}
+                  onClick={() => fillDemoCredentials('hoka1@gmail.com', '1408Hoka')}
                 >
                   Use
                 </Button>
