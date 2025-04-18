@@ -12,7 +12,7 @@ export interface VolunteerFormData {
     kewarganegaraan: string; // Changed from enum to string to match API
     nomorHP: string;
     email: string;
-    wilayahId: number;
+    wilayahId: number; // Changed to string to match API payload
     profileImage?: File | null;
   }
   
