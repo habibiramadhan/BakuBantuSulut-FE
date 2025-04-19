@@ -1,156 +1,163 @@
-// src/app/dashboard/admins/page.tsx
+// src/app/dashboard/admins/page.tsx (updated)
 "use client";
 
-import { useEffect } from 'react';
-import { useToast } from '@/contexts/ToastContext';
-import { getUser } from '@/services/auth';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
-interface Admin {
-  id: string;
-  name: string;
-  email: string;
-  role: 'ADMIN' | 'SUPERADMIN';
-  region: string;
-  status: 'active' | 'inactive';
-  lastLogin: string;
-  createdAt: string;
-}
+import { DashboardSection } from '@/components/pages/dashboard';
+import { useToast } from '@/contexts/ToastContext';
+import { 
+  AdminsTable, 
+  AddAdminModal, 
+  DeleteConfirmModal, 
+  PasswordResetModal,
+  AdminMobileView,
+  AdminHeader
+} from '@/components/pages/admin';
+import { useAdmin } from '@/hooks/useAdmin';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminsPage() {
-  const router = useRouter();
+  const {
+    admins,
+    isLoading,
+    isSaving,
+    fetchAdmins,
+    createAdmin,
+    deleteAdmin,
+    resetPassword,
+    updateStatus
+  } = useAdmin();
+  
   const toast = useToast();
+  const router = useRouter();
+  const { hasPermission } = useAuth();
   
-  // Check if user is SUPERADMIN
-  const user = getUser();
-  const isSuperAdmin = user?.role === 'SUPERADMIN';
-  
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [adminToDelete, setAdminToDelete] = useState<string | null>(null);
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check screen size for responsive design
   useEffect(() => {
-    // If not SUPERADMIN, redirect to dashboard
-    if (!isSuperAdmin) {
-      toast.error('Anda tidak memiliki akses ke halaman ini', 'Akses Ditolak');
-      router.push('/dashboard');
-    }
-  }, [isSuperAdmin, router, toast]);
-  
-  // Mock data - in a real app, this would come from an API
-  const mockAdmins: Admin[] = [
-    {
-      id: '1',
-      name: 'Admin Utama',
-      email: 'superadmin@bakubantu.id',
-      role: 'SUPERADMIN',
-      region: 'Pusat',
-      status: 'active',
-      lastLogin: '2025-04-12T15:30:00',
-      createdAt: '2024-12-01'
-    },
-    {
-      id: '2',
-      name: 'Ahmad Fauzi',
-      email: 'ahmad.fauzi@bakubantu.id',
-      role: 'ADMIN',
-      region: 'DKI Jakarta',
-      status: 'active',
-      lastLogin: '2025-04-10T09:15:00',
-      createdAt: '2025-01-10'
-    },
-    {
-      id: '3',
-      name: 'Siti Rahayu',
-      email: 'siti.rahayu@bakubantu.id',
-      role: 'ADMIN',
-      region: 'Jawa Barat',
-      status: 'active',
-      lastLogin: '2025-04-11T14:20:00',
-      createdAt: '2025-01-15'
-    },
-    {
-      id: '4',
-      name: 'Budi Santoso',
-      email: 'budi.santoso@bakubantu.id',
-      role: 'ADMIN',
-      region: 'Jawa Timur',
-      status: 'inactive',
-      lastLogin: '2025-03-25T10:45:00',
-      createdAt: '2025-02-05'
-    },
-    {
-      id: '5',
-      name: 'Dewi Lestari',
-      email: 'dewi.lestari@bakubantu.id',
-      role: 'ADMIN',
-      region: 'Sulawesi Selatan',
-      status: 'active',
-      lastLogin: '2025-04-08T11:30:00',
-      createdAt: '2025-02-10'
-    }
-  ];
-
-  const initialFormData = {
-    name: '',
-    email: '',
-    role: 'ADMIN',
-    region: '',
-    password: '',
-    confirmPassword: ''
-  };
-
-  const initialFormErrors = {
-    name: '',
-    email: '',
-    region: '',
-    password: '',
-    confirmPassword: ''
-  };
-
-  const validateForm = () => {
-    let valid = true;
-    const newErrors = {
-      name: '',
-      email: '',
-      region: '',
-      password: '',
-      confirmPassword: ''
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
     };
     
-    if (!initialFormData.name.trim()) {
-      newErrors.name = 'Nama lengkap wajib diisi';
-      valid = false;
+    // Initial check
+    handleResize();
+    
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Check if user has permission to access this page
+  useEffect(() => {
+    if (!hasPermission('SUPERADMIN')) {
+      router.push('/dashboard');
+      toast.error('Anda tidak memiliki akses ke halaman ini');
+      return;
     }
     
-    if (!initialFormData.email.trim()) {
-      newErrors.email = 'Email wajib diisi';
-      valid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(initialFormData.email)) {
-      newErrors.email = 'Format email tidak valid';
-      valid = false;
+    // Fetch admins on component mount
+    fetchAdmins();
+  }, [hasPermission, router, toast, fetchAdmins]);
+
+  const handleAddAdmin = async (email: string, password: string, role: 'ADMIN' | 'SUPERADMIN') => {
+    const success = await createAdmin({ email, password, role });
+    if (success) {
+      setIsAddModalOpen(false);
     }
-    
-    if (!initialFormData.region.trim()) {
-      newErrors.region = 'Wilayah wajib diisi';
-      valid = false;
-    }
-    
-    if (!initialFormData.password) {
-      newErrors.password = 'Password wajib diisi';
-      valid = false;
-    } else if (initialFormData.password.length < 8) {
-      newErrors.password = 'Password minimal 8 karakter';
-      valid = false;
-    }
-    
-    if (initialFormData.password !== initialFormData.confirmPassword) {
-      newErrors.confirmPassword = 'Password tidak sama';
-      valid = false;
-    }
-    
-    return { valid, errors: newErrors };
   };
 
+  const handleDeleteClick = (id: string) => {
+    setAdminToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!adminToDelete) return;
+    
+    const success = await deleteAdmin(adminToDelete);
+    if (success) {
+      setIsDeleteModalOpen(false);
+      setAdminToDelete(null);
+    }
+  };
+
+  const handleResetPassword = async (id: string) => {
+    const newPasswordFromApi = await resetPassword(id);
+    if (newPasswordFromApi) {
+      setNewPassword(newPasswordFromApi);
+      setIsResetModalOpen(true);
+    }
+  };
+
+  const handleToggleStatus = async (id: string, newStatus: 'ACTIVE' | 'INACTIVE') => {
+    await updateStatus(id, newStatus);
+  };
+
+  // Calculate stats
+  const activeAdmins = admins.filter(admin => admin.status === 'ACTIVE').length;
+  const inactiveAdmins = admins.filter(admin => admin.status === 'INACTIVE').length;
+
   return (
-    <div>
-      {/* Add your JSX here */}
+    <div className="space-y-6">
+      <AdminHeader
+        totalAdmins={admins.length}
+        activeAdmins={activeAdmins}
+        inactiveAdmins={inactiveAdmins}
+        onAddClick={() => setIsAddModalOpen(true)}
+      />
+
+      <DashboardSection
+        title="Daftar Admin"
+        description="Kelola akun admin untuk sistem BakuBantu"
+      >
+        {isMobile ? (
+          <AdminMobileView
+            admins={admins}
+            onDelete={handleDeleteClick}
+            onResetPassword={handleResetPassword}
+            onToggleStatus={handleToggleStatus}
+          />
+        ) : (
+          <AdminsTable 
+            admins={admins}
+            isLoading={isLoading}
+            onDelete={handleDeleteClick}
+            onResetPassword={handleResetPassword}
+            onToggleStatus={handleToggleStatus}
+          />
+        )}
+      </DashboardSection>
+
+      {/* Add Admin Modal */}
+      <AddAdminModal 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleAddAdmin}
+        isSubmitting={isSaving}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal 
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        isLoading={isSaving}
+      />
+
+      {/* Password Reset Modal */}
+      <PasswordResetModal 
+        isOpen={isResetModalOpen}
+        onClose={() => setIsResetModalOpen(false)}
+        newPassword={newPassword}
+      />
     </div>
   );
 }
