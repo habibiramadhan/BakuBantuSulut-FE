@@ -1,114 +1,71 @@
 // src/app/dashboard/volunteers/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { DashboardSection } from '@/components/pages/dashboard';
+import VolunteersTable from '@/components/pages/volunteer/VolunteersTable';
+import VolunteerStats from '@/components/pages/volunteer/VolunteerStats';
+import AddVolunteerModal from '@/components/pages/volunteer/AddVolunteerModal';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-
-interface Volunteer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  skills: string[];
-  joinDate: string;
-  status: 'active' | 'inactive' | 'pending';
-  assignedOrphanage?: string;
-}
+import { useToast } from '@/contexts/ToastContext';
+import { useVolunteer } from '@/hooks/useVolunteer';
 
 export default function VolunteersPage() {
-  // Mock data - in a real app, this would come from an API
-  const [volunteers] = useState<Volunteer[]>([
-    {
-      id: '1',
-      name: 'Ahmad Fauzi',
-      email: 'ahmad.fauzi@example.com',
-      phone: '+62812345678',
-      skills: ['Mengajar', 'Memasak'],
-      joinDate: '2025-01-15',
-      status: 'active',
-      assignedOrphanage: 'Panti Asuhan Kasih Sayang'
-    },
-    {
-      id: '2',
-      name: 'Siti Rahayu',
-      email: 'siti.rahayu@example.com',
-      phone: '+62823456789',
-      skills: ['Kesehatan', 'Konseling'],
-      joinDate: '2025-02-20',
-      status: 'active',
-      assignedOrphanage: 'Rumah Yatim Bahagia'
-    },
-    {
-      id: '3',
-      name: 'Budi Santoso',
-      email: 'budi.santoso@example.com',
-      phone: '+62834567890',
-      skills: ['IT', 'Musik'],
-      joinDate: '2025-03-10',
-      status: 'pending'
-    },
-    {
-      id: '4',
-      name: 'Dewi Lestari',
-      email: 'dewi.lestari@example.com',
-      phone: '+62845678901',
-      skills: ['Kesenian', 'Bahasa Inggris'],
-      joinDate: '2025-02-05',
-      status: 'active',
-      assignedOrphanage: 'Panti Asuhan Cahaya Kasih'
-    },
-    {
-      id: '5',
-      name: 'Rudi Hartono',
-      email: 'rudi.hartono@example.com',
-      phone: '+62856789012',
-      skills: ['Olahraga', 'Motivasi'],
-      joinDate: '2025-01-25',
-      status: 'inactive'
+  const [showAddModal, setShowAddModal] = useState(false);
+  const toast = useToast();
+  const { 
+    volunteers, 
+    isLoading, 
+    fetchVolunteers, 
+    addVolunteer 
+  } = useVolunteer();
+
+  // Wrapper function to handle fetchVolunteers that returns Promise<VolunteerResponse[]>
+  const handleFetchVolunteers = useCallback(async () => {
+    try {
+      await fetchVolunteers();
+    } catch (error) {
+      console.error('Failed to fetch volunteers:', error);
     }
-  ]);
+  }, [fetchVolunteers]);
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('all');
-  const [selectedSkill, setSelectedSkill] = useState('all');
+  useEffect(() => {
+    handleFetchVolunteers();
+  }, [handleFetchVolunteers]);
 
-  // Get unique skills for the filter
-  const allSkills = Array.from(new Set(volunteers.flatMap(v => v.skills)));
+  const handleAddVolunteer = () => {
+    setShowAddModal(true);
+  };
 
-  // Filtered volunteers based on search and filters
-  const filteredVolunteers = volunteers.filter(volunteer => {
-    const matchesSearch = volunteer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          volunteer.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = selectedStatus === 'all' || volunteer.status === selectedStatus;
-    const matchesSkill = selectedSkill === 'all' || volunteer.skills.includes(selectedSkill);
-    
-    return matchesSearch && matchesStatus && matchesSkill;
-  });
-
-  // Status badge colors
-  const getStatusBadge = (status: Volunteer['status']) => {
-    switch (status) {
-      case 'active':
-        return <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Aktif</span>;
-      case 'inactive':
-        return <span className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Tidak Aktif</span>;
-      case 'pending':
-        return <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Menunggu</span>;
-      default:
-        return null;
-    }
+  // This is a void function that doesn't return anything
+  const handleVolunteerAdded = (formData: globalThis.FormData) => {
+    // We use void here to explicitly indicate we're ignoring the Promise result
+    void addVolunteer(formData).then(success => {
+      if (success) {
+        setShowAddModal(false);
+        toast.success('Relawan berhasil ditambahkan');
+        // Refresh the volunteers list
+        void handleFetchVolunteers();
+      }
+    });
   };
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="space-y-6">
+      {/* Page Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Relawan</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Relawan</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Kelola data dan informasi relawan yang tergabung dengan bakubantu
+          </p>
+        </div>
         <Button 
           variant="primary" 
+          onClick={handleAddVolunteer}
           leftIcon={
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
             </svg>
           }
         >
@@ -116,220 +73,29 @@ export default function VolunteersPage() {
         </Button>
       </div>
 
-      {/* Filters and Search */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-        <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
-          <div className="flex-1">
-            <Input
-              placeholder="Cari nama atau email relawan..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              leftIcon={
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                </svg>
-              }
-            />
-          </div>
-          <div className="flex-shrink-0 w-full md:w-48">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-            >
-              <option value="all">Semua Status</option>
-              <option value="active">Aktif</option>
-              <option value="inactive">Tidak Aktif</option>
-              <option value="pending">Menunggu</option>
-            </select>
-          </div>
-          <div className="flex-shrink-0 w-full md:w-48">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Keahlian
-            </label>
-            <select
-              className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue"
-              value={selectedSkill}
-              onChange={(e) => setSelectedSkill(e.target.value)}
-            >
-              <option value="all">Semua Keahlian</option>
-              {allSkills.map(skill => (
-                <option key={skill} value={skill}>{skill}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
+      {/* Stats Overview */}
+      <VolunteerStats volunteers={volunteers} />
 
-      {/* Volunteers List */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nama
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Kontak
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Keahlian
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Panti Asuhan
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tanggal Bergabung
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredVolunteers.map((volunteer) => (
-                <tr key={volunteer.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {volunteer.name}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{volunteer.email}</div>
-                    <div className="text-sm text-gray-500">{volunteer.phone}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex flex-wrap gap-1">
-                      {volunteer.skills.map((skill, index) => (
-                        <span key={index} className="px-2 py-1 text-xs rounded-full bg-babyBlue-light text-babyBlue-dark">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">
-                      {volunteer.assignedOrphanage || '-'}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(volunteer.joinDate).toLocaleDateString('id-ID', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStatusBadge(volunteer.status)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        leftIcon={
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                          </svg>
-                        }
-                      >
-                        Lihat
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        leftIcon={
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                          </svg>
-                        }
-                      >
-                        Edit
-                      </Button>
-                      
-                      {volunteer.status !== 'active' && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          leftIcon={
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                          }
-                          className="text-green-600 hover:bg-green-50"
-                        >
-                          Aktifkan
-                        </Button>
-                      )}
-                      
-                      {volunteer.status === 'active' && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          leftIcon={
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-600" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" />
-                            </svg>
-                          }
-                          className="text-red-600 hover:bg-red-50"
-                        >
-                          Nonaktifkan
-                        </Button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        
-        {/* Empty State */}
-        {filteredVolunteers.length === 0 && (
-          <div className="py-12 text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">Tidak ada data yang ditemukan</h3>
-            <p className="mt-1 text-gray-500">Coba ubah filter pencarian atau tambahkan relawan baru.</p>
-            <div className="mt-6">
-              <Button variant="primary">Tambah Relawan</Button>
-            </div>
-          </div>
-        )}
-        
-        {/* Pagination */}
-        {filteredVolunteers.length > 0 && (
-          <div className="flex items-center justify-between px-6 py-3 bg-gray-50 border-t border-gray-200">
-            <div className="text-sm text-gray-500">
-              Menampilkan <span className="font-medium">{filteredVolunteers.length}</span> dari <span className="font-medium">{volunteers.length}</span> relawan
-            </div>
-            <div className="flex space-x-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                disabled={true}
-              >
-                Sebelumnya
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                disabled={filteredVolunteers.length === volunteers.length}
-              >
-                Selanjutnya
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Volunteers Table */}
+      <DashboardSection
+        title="Daftar Relawan"
+        description="Berikut adalah daftar relawan yang terdaftar di sistem."
+      >
+        <VolunteersTable 
+          volunteers={volunteers} 
+          isLoading={isLoading} 
+          onRefresh={handleFetchVolunteers} 
+        />
+      </DashboardSection>
+
+      {/* Add Volunteer Modal */}
+      {showAddModal && (
+        <AddVolunteerModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onSuccess={handleVolunteerAdded}
+        />
+      )}
     </div>
-  )};
+  );
+}
