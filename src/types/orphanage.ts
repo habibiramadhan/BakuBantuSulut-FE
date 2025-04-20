@@ -1,5 +1,5 @@
 // src/types/orphanage.ts
-
+// Existing interfaces kept for backward compatibility
 export interface Orphanage {
   id: number;
   namaPanti: string;
@@ -20,6 +20,50 @@ export interface Orphanage {
     nama: string;
     provinsi: string | null;
   };
+}
+
+// New interfaces for detailed orphanage view
+export interface OrphanageDetail {
+  id_panti: number;
+  nama_panti: string;
+  foto_utama: string;
+  deskripsi_singkat: string;
+  jumlah_anak: number;
+  status: string;
+  yayasan: YayasanDetail;
+  wilayah: WilayahDetail;
+  detail: OrphanageDetailInfo;
+}
+
+export interface YayasanDetail {
+  id_yayasan: number;
+  nama_yayasan: string;
+  kontak_yayasan: KontakYayasan[];
+}
+
+export interface KontakYayasan {
+  jabatan: string;
+  nama_kontak: string;
+  nomor_telepon: string;
+}
+
+export interface WilayahDetail {
+  id_wilayah: number;
+  nama_wilayah: string;
+  provinsi: string | null;
+}
+
+export interface OrphanageDetailInfo {
+  fokus_pelayanan: string;
+  alamat_lengkap: string;
+  deskripsi_lengkap: string;
+  jumlah_pengasuh: number;
+  jumlah_penghuni: {
+    laki_laki: number;
+    perempuan: number;
+  };
+  kategori_kebutuhan: string[];
+  sumbangan_diterima: string[];
 }
 
 export interface Wilayah {
@@ -63,4 +107,25 @@ export interface OrphanageGridProps {
 
 export interface OrphanageCardProps {
   orphanage: Orphanage;
+}
+
+// New interfaces for orphanage detail components
+export interface OrphanageHeroProps {
+  orphanage: OrphanageDetail;
+}
+
+export interface OrphanageDetailsProps {
+  orphanage: OrphanageDetail;
+}
+
+export interface OrphanageNeedsProps {
+  orphanage: OrphanageDetail;
+}
+
+export interface OrphanageDonationProps {
+  orphanage: OrphanageDetail;
+}
+
+export interface OrphanageContactProps {
+  orphanage: OrphanageDetail;
 }

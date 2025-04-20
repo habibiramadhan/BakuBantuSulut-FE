@@ -1,6 +1,6 @@
 // src/services/orphanageService.ts
 import { api } from '@/lib/http-client';
-import { Orphanage, Wilayah, Yayasan } from '@/types/orphanage';
+import { Orphanage, Wilayah, Yayasan, OrphanageDetail } from '@/types/orphanage';
 
 /**
  * Service for orphanage related API calls
@@ -19,7 +19,12 @@ export const orphanageService = {
    * @param id Orphanage ID
    */
   getOrphanageById: (id: number) => {
-    return api.get<{ message: string; data: Orphanage }>(`/panti/${id}`);
+    return api.get<{ 
+      status: string; 
+      data: { 
+        panti: OrphanageDetail 
+      } 
+    }>(`/panti/${id}`);
   },
 
   /**
