@@ -5,13 +5,20 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
+import { motion } from 'framer-motion';
 
 const OrphanageRegister = () => {
   return (
     <section className="py-16 bg-gradient-to-br from-white to-lavender-light/20">
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center gap-10">
-          <div className="md:w-1/2">
+          <motion.div 
+            className="md:w-1/2"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
             <div className="relative h-96 w-full rounded-xl overflow-hidden shadow-xl">
               <Image 
                 src="/images/orphanages/become-partner.jpg" 
@@ -29,9 +36,15 @@ const OrphanageRegister = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="md:w-1/2">
+          <motion.div 
+            className="md:w-1/2"
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
             <div className="bg-white p-8 rounded-xl shadow-lg">
               <div className="flex items-center mb-6">
                 <div className="w-12 h-px bg-forest mr-4"></div>
@@ -104,7 +117,7 @@ const OrphanageRegister = () => {
                 </a>
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

@@ -6,12 +6,14 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import OrphanageCard from './OrphanageCard';
 import { OrphanageGridProps } from '@/types/orphanage';
+import { Loading } from '@/components/ui/Loading';
 
 const OrphanageGrid: React.FC<OrphanageGridProps> = ({ 
   orphanages, 
   currentPage, 
   totalPages, 
-  onPageChange 
+  onPageChange,
+  isLoading
 }) => {
   // Animation variants for staggered animation
   const container = {
@@ -23,6 +25,14 @@ const OrphanageGrid: React.FC<OrphanageGridProps> = ({
       }
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[400px] flex items-center justify-center">
+        <Loading size="lg" text="Memuat data panti asuhan..." />
+      </div>
+    );
+  }
 
   return (
     <div id="orphanage-grid">

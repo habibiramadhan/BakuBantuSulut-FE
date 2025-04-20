@@ -10,24 +10,24 @@ import { useOrphanages } from '@/hooks/useOrphanages';
 const OrphanageFilter: React.FC<OrphanageFilterProps> = ({
   searchTerm,
   selectedRegion,
-  selectedFoundation,
+  selectedYayasan,
   onSearchChange,
   onRegionChange,
-  onFoundationChange,
+  onYayasanChange,
   onResetFilters
 }) => {
-  const { regions, foundations } = useOrphanages();
+  const { wilayahs, yayasans } = useOrphanages();
   
-  // Map regions to options
+  // Map wilayahs to options
   const regionOptions = [
     { value: '', label: 'Semua Wilayah' },
-    ...regions.map(region => ({ value: region, label: region }))
+    ...wilayahs.map(wilayah => ({ value: String(wilayah.id), label: wilayah.nama }))
   ];
   
-  // Map foundations to options
-  const foundationOptions = [
+  // Map yayasans to options
+  const yayasanOptions = [
     { value: '', label: 'Semua Yayasan' },
-    ...foundations.map(foundation => ({ value: foundation, label: foundation }))
+    ...yayasans.map(yayasan => ({ value: String(yayasan.id), label: yayasan.namaYayasan }))
   ];
 
   return (
@@ -60,18 +60,18 @@ const OrphanageFilter: React.FC<OrphanageFilterProps> = ({
           <Select
             label="Wilayah"
             options={regionOptions}
-            value={selectedRegion}
-            onChange={(e) => onRegionChange(e.target.value)}
+            value={selectedRegion ? String(selectedRegion) : ''}
+            onChange={(e) => onRegionChange(e.target.value ? Number(e.target.value) : null)}
           />
         </div>
         
-        {/* Foundation Filter */}
+        {/* Yayasan Filter */}
         <div>
           <Select
             label="Yayasan Pengelola"
-            options={foundationOptions}
-            value={selectedFoundation}
-            onChange={(e) => onFoundationChange(e.target.value)}
+            options={yayasanOptions}
+            value={selectedYayasan ? String(selectedYayasan) : ''}
+            onChange={(e) => onYayasanChange(e.target.value ? Number(e.target.value) : null)}
           />
         </div>
         
@@ -109,11 +109,11 @@ const OrphanageFilter: React.FC<OrphanageFilterProps> = ({
             </div>
           )}
           
-          {selectedRegion && (
+          {selectedRegion !== null && (
             <div className="bg-lavender-light/20 text-lavender-dark px-3 py-1 rounded-full text-sm flex items-center">
-              <span>Wilayah: {selectedRegion}</span>
+              <span>Wilayah: {wilayahs.find(w => w.id === selectedRegion)?.nama}</span>
               <button 
-                onClick={() => onRegionChange('')}
+                onClick={() => onRegionChange(null)}
                 className="ml-2 hover:text-red-500"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,11 +123,11 @@ const OrphanageFilter: React.FC<OrphanageFilterProps> = ({
             </div>
           )}
           
-          {selectedFoundation && (
+          {selectedYayasan !== null && (
             <div className="bg-mango-light/20 text-mango-dark px-3 py-1 rounded-full text-sm flex items-center">
-              <span>Yayasan: {selectedFoundation}</span>
+              <span>Yayasan: {yayasans.find(y => y.id === selectedYayasan)?.namaYayasan}</span>
               <button 
-                onClick={() => onFoundationChange('')}
+                onClick={() => onYayasanChange(null)}
                 className="ml-2 hover:text-red-500"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -138,7 +138,7 @@ const OrphanageFilter: React.FC<OrphanageFilterProps> = ({
           )}
         </div>
         
-        {(searchTerm || selectedRegion || selectedFoundation) && (
+        {(searchTerm || selectedRegion !== null || selectedYayasan !== null) && (
           <Button 
             variant="outline"
             onClick={onResetFilters}

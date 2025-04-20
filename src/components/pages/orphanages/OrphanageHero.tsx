@@ -2,6 +2,7 @@
 "use client";
 
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const OrphanageHero = () => {
   return (
@@ -11,7 +12,12 @@ const OrphanageHero = () => {
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-poppy-light/10 rounded-full -ml-48 -mb-48 blur-3xl"></div>
       
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
+        <motion.div 
+          className="max-w-4xl mx-auto text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="inline-flex items-center justify-center mb-6">
             <div className="w-12 h-px bg-poppy mr-4"></div>
             <p className="text-sm uppercase tracking-wider font-semibold text-poppy-dark">PANTI ASUHAN</p>
@@ -26,7 +32,7 @@ const OrphanageHero = () => {
             Menghubungkan kepedulian dengan aksi nyata untuk membantu panti asuhan di Sulawesi Utara. 
             Bersama, kita dapat memberikan dukungan yang dibutuhkan oleh anak-anak di panti asuhan.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

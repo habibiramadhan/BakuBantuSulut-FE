@@ -10,11 +10,9 @@ import {
   OrphanageRegister 
 } from '@/components/pages/orphanages';
 import { useOrphanages } from '@/hooks/useOrphanages';
-import { Loading } from '@/components/ui/Loading';
 
 export default function OrphanagesPage() {
   const { 
-    orphanages, 
     filteredOrphanages, 
     currentPage, 
     totalPages, 
@@ -22,10 +20,10 @@ export default function OrphanagesPage() {
     error,
     searchTerm, 
     selectedRegion, 
-    selectedFoundation,
+    selectedYayasan,
     handleSearchChange, 
     handleRegionChange, 
-    handleFoundationChange,
+    handleYayasanChange,
     resetFilters,
     handlePageChange
   } = useOrphanages();
@@ -41,18 +39,14 @@ export default function OrphanagesPage() {
           <OrphanageFilter 
             searchTerm={searchTerm}
             selectedRegion={selectedRegion}
-            selectedFoundation={selectedFoundation}
+            selectedYayasan={selectedYayasan}
             onSearchChange={handleSearchChange}
             onRegionChange={handleRegionChange}
-            onFoundationChange={handleFoundationChange}
+            onYayasanChange={handleYayasanChange}
             onResetFilters={resetFilters}
           />
           
-          {isLoading ? (
-            <div className="min-h-[400px] flex items-center justify-center">
-              <Loading size="lg" text="Memuat data panti asuhan..." />
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="min-h-[400px] flex items-center justify-center">
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
@@ -70,6 +64,7 @@ export default function OrphanagesPage() {
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={handlePageChange}
+              isLoading={isLoading}
             />
           )}
         </section>
