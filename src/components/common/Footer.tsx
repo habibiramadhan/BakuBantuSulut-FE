@@ -120,19 +120,11 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4 text-lavender-light">Lainnya</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/projects" className="text-gray-400 hover:text-white transition-colors flex items-center">
+                <Link href="/orphanages" className="text-gray-400 hover:text-white transition-colors flex items-center">
                   <svg className="w-3 h-3 mr-2 text-poppy" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
-                  Proyek
-                </Link>
-              </li>
-              <li>
-                <Link href="/events" className="text-gray-400 hover:text-white transition-colors flex items-center">
-                  <svg className="w-3 h-3 mr-2 text-poppy" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Acara
+                  Mitra
                 </Link>
               </li>
               <li>
@@ -141,14 +133,6 @@ const Footer = () => {
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                   </svg>
                   Donasi
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-gray-400 hover:text-white transition-colors flex items-center">
-                  <svg className="w-3 h-3 mr-2 text-poppy" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Blog
                 </Link>
               </li>
             </ul>
@@ -220,7 +204,7 @@ const Footer = () => {
             © {new Date().getFullYear()} Baku Bantu. Semua hak dilindungi.
           </p>
           <p className="text-gray-600 text-xs mt-2">
-            Dibuat dengan <span className="text-poppy">♥</span> untuk Sulawesi Utara
+            Dibuat oleh <a href="https://www.instagram.com/codemercs" className="text-poppy hover:underline">codemercs</a> <span className="text-red-500">♥</span> untuk Sulawesi Utara
           </p>
         </div>
       </div>

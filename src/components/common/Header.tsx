@@ -58,7 +58,7 @@ const Header = () => {
               { path: '/', label: 'Beranda' },
               { path: '/about', label: 'Tentang Kami' },
               { path: '/services', label: 'Layanan' },
-              { path: '/projects', label: 'Media' },
+              { path: '/orphanages', label: 'Mitra' },
               { path: '/contact', label: 'Kontak' }
             ].map((item) => (
               <Link 
@@ -123,7 +123,7 @@ const Header = () => {
             { path: '/', label: 'Beranda' },
             { path: '/about', label: 'Tentang Kami' },
             { path: '/services', label: 'Layanan' },
-            { path: '/projects', label: 'Media' },
+            { path: '/orphanages', label: 'Mitra' },
             { path: '/contact', label: 'Kontak' }
           ].map((item) => (
             <Link 
