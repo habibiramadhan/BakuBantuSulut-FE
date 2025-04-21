@@ -10,21 +10,18 @@ import {
   OrphanageDonation,
   OrphanageContact,
   OrphanageDisclaimer
-  
 } from '@/components/pages/orphanages/detail';
 import { useOrphanageDetail } from '@/hooks/useOrphanageDetail';
 import { Loading } from '@/components/ui/Loading';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
-interface OrphanageDetailPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function OrphanageDetailPage({ params }: OrphanageDetailPageProps) {
-  const { orphanage, isLoading, error } = useOrphanageDetail(params.id);
+export default function OrphanageDetailPage() {
+  const params = useParams();
+  const id = params?.id as string;
+  
+  const { orphanage, isLoading, error } = useOrphanageDetail(id);
 
   if (isLoading) {
     return (

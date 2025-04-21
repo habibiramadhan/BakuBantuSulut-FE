@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { DashboardSection } from '@/components/pages/dashboard';
 import VolunteerEditForm from '@/components/pages/volunteer/VolunteerEditForm';
@@ -16,14 +16,10 @@ import volunteerManagementService from '@/services/volunteerManagementService';
 import { VolunteerResponse } from '@/services/volunteerService';
 import { objectToFormData } from '@/lib/form-utils';
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function VolunteerDetailPage({ params }: PageProps) {
-  const { id } = params;
+export default function VolunteerDetailPage() {
+  const params = useParams();
+  const id = params?.id as string;
+  // id is already extracted above from useParams()
   const router = useRouter();
   const toast = useToast();
   const [volunteer, setVolunteer] = useState<VolunteerResponse | null>(null);
