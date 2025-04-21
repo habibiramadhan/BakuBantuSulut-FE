@@ -62,7 +62,7 @@ const OrphanageDetails: React.FC<OrphanageDetailsProps> = ({ orphanage }) => {
             
             <div className="space-y-6">
               <div>
-                <h4 className="text-lg font-semibold mb-3 text-babyBlue-dark">Sejarah</h4>
+                <h4 className="text-lg font-semibold mb-3 text-babyBlue-dark">Deskripsi</h4>
                 <p className="text-gray-600">
                   {orphanage.detail.deskripsi_lengkap}
                 </p>

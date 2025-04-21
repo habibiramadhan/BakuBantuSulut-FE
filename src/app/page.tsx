@@ -351,7 +351,6 @@ export default function Home() {
         <ProjectsSection />
         <DonationSection />
         <CallToAction />
-        <EventsSection />
       </main>
       <Footer />
     </div>

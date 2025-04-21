@@ -200,12 +200,12 @@ const Footer = () => {
             </div>
           </div>
           
-          <p className="text-gray-500 text-sm">
+          {/* <p className="text-gray-500 text-sm">
             © {new Date().getFullYear()} Baku Bantu. Semua hak dilindungi.
           </p>
           <p className="text-gray-600 text-xs mt-2">
             Dibuat oleh <a href="https://www.instagram.com/codemercs" className="text-poppy hover:underline">codemercs</a> <span className="text-red-500">♥</span> untuk Sulawesi Utara
-          </p>
+          </p> */}
         </div>
       </div>
     </footer>
