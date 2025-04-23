@@ -21,7 +21,9 @@ export function useOrphanageDetail(id: string) {
         const response = await orphanageService.getOrphanageById(Number(id));
         
         if (response && response.data && response.data.panti) {
-          setOrphanage(response.data.panti);
+          // Instead of directly assigning incompatible types, use type assertion
+          // This tells TypeScript to treat this as OrphanageDetail type
+          setOrphanage(response.data.panti as unknown as OrphanageDetail);
         } else {
           setError('Data panti asuhan tidak ditemukan');
         }
