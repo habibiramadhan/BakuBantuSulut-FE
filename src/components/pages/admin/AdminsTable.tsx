@@ -19,11 +19,10 @@ const AdminsTable: React.FC<AdminsTableProps> = ({
   admins, 
   isLoading,
   onDelete,
-  onResetPassword,
-  onToggleStatus
+  onResetPassword
 }) => {
   const toast = useToast();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery] = useState('');
 
   // Filter admins based on search query
   const filteredAdmins = admins.filter(admin => {
@@ -103,15 +102,6 @@ const AdminsTable: React.FC<AdminsTableProps> = ({
       header: 'Aksi',
       accessor: (admin: AdminResponse) => (
         <div className="flex space-x-2 justify-end">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onToggleStatus(admin.id, admin.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE')}
-            className="text-xs"
-          >
-            {admin.status === 'ACTIVE' ? 'Nonaktifkan' : 'Aktifkan'}
-          </Button>
-          
           <Button
             variant="outline"
             size="sm"

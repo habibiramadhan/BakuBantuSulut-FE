@@ -36,6 +36,7 @@ const AdminMobileView: React.FC<AdminMobileViewProps> = ({
           admin={admin}
           onDelete={onDelete}
           onResetPassword={onResetPassword}
+          showStatusToggle={false}
           onToggleStatus={onToggleStatus}
         />
       ))}

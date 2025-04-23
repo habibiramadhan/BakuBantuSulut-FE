@@ -1,5 +1,6 @@
 // src/services/adminService.ts
 import { api } from '@/lib/http-client';
+import { VolunteerResponse } from '@/services/volunteerService';
 
 export interface AdminResponse {
   id: string;
@@ -23,9 +24,23 @@ interface VolunteerInfo {
 }
 
 export interface CreateAdminParams {
-  email: string;
-  password: string;
+  volunteerId: string;
   role: 'ADMIN' | 'SUPERADMIN';
+}
+
+// Interface for add admin from volunteer response
+export interface AddAdminResponse {
+  message: string;
+  data: {
+    admin: AdminResponse;
+    volunteer: VolunteerResponse;
+  };
+}
+
+// Interface for reset password response
+export interface ResetPasswordResponse {
+  message: string;
+  data: AdminResponse;
 }
 
 export const adminService = {
@@ -33,15 +48,25 @@ export const adminService = {
    * Get all admins
    */
   getAllAdmins: () => {
-    return api.get<{ message: string; data: AdminResponse[] }>('/auth/admins');
+    return api.get<{ message: string; data: AdminResponse[] }>('/admin');
   },
 
   /**
-   * Create a new admin
-   * @param data Admin data
+   * Get active volunteers
+   */
+  getActiveVolunteers: () => {
+    return api.get<{ message: string; data: VolunteerResponse[] }>('/volunteers/active');
+  },
+
+  /**
+   * Create a new admin from volunteer
+   * @param volunteerId Volunteer ID
+   * @param role Admin role
    */
   createAdmin: (data: CreateAdminParams) => {
-    return api.post<{ message: string; data: AdminResponse }>('/auth/admins', data);
+    return api.post<AddAdminResponse>(`/admin/${data.volunteerId}`, { 
+      role: data.role 
+    });
   },
 
   /**
@@ -49,7 +74,7 @@ export const adminService = {
    * @param id Admin ID
    */
   deleteAdmin: (id: string) => {
-    return api.delete<{ message: string }>(`/auth/admins/${id}`);
+    return api.delete<{ message: string }>(`/admin/${id}`);
   },
 
   /**
@@ -57,7 +82,7 @@ export const adminService = {
    * @param id Admin ID
    */
   resetPassword: (id: string) => {
-    return api.post<{ message: string; data: { newPassword: string } }>(`/auth/admins/${id}/reset-password`, {});
+    return api.post<ResetPasswordResponse>(`/admin/${id}/reset-password`, {});
   },
 
   /**
@@ -66,7 +91,7 @@ export const adminService = {
    * @param status New status
    */
   updateStatus: (id: string, status: 'ACTIVE' | 'INACTIVE') => {
-    return api.patch<{ message: string }>(`/auth/admins/${id}/status`, { status });
+    return api.patch<{ message: string }>(`/admin/${id}/status`, { status });
   }
 };
 

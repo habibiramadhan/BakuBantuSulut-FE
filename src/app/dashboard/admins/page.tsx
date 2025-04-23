@@ -1,4 +1,4 @@
-// src/app/dashboard/admins/page.tsx (updated)
+// src/app/dashboard/admins/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -19,9 +19,11 @@ import { useAuth } from '@/contexts/AuthContext';
 export default function AdminsPage() {
   const {
     admins,
+    activeVolunteers,
     isLoading,
     isSaving,
     fetchAdmins,
+    fetchActiveVolunteers,
     createAdmin,
     deleteAdmin,
     resetPassword,
@@ -36,7 +38,6 @@ export default function AdminsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [adminToDelete, setAdminToDelete] = useState<string | null>(null);
-  const [newPassword, setNewPassword] = useState<string>('');
   const [isMobile, setIsMobile] = useState(false);
 
   // Check screen size for responsive design
@@ -63,14 +64,30 @@ export default function AdminsPage() {
       return;
     }
     
-    // Fetch admins on component mount
-    fetchAdmins();
-  }, [hasPermission, router, toast, fetchAdmins]);
+    // Fetch admins and active volunteers on component mount
+    const loadData = async () => {
+      try {
+        await Promise.all([
+          fetchAdmins(),
+          fetchActiveVolunteers()
+        ]);
+      } catch (error) {
+        console.error("Error loading data:", error);
+        toast.error("Gagal memuat data. Silakan coba lagi.");
+      }
+    };
+    
+    loadData();
+  }, [hasPermission, router, toast, fetchAdmins, fetchActiveVolunteers]);
 
-  const handleAddAdmin = async (email: string, password: string, role: 'ADMIN' | 'SUPERADMIN') => {
-    const success = await createAdmin({ email, password, role });
+  const handleAddAdmin = async (volunteerId: string, role: 'ADMIN' | 'SUPERADMIN') => {
+    const success = await createAdmin({ volunteerId, role });
     if (success) {
       setIsAddModalOpen(false);
+      
+      // Refresh data after adding admin
+      fetchAdmins();
+      fetchActiveVolunteers();
     }
   };
 
@@ -90,9 +107,8 @@ export default function AdminsPage() {
   };
 
   const handleResetPassword = async (id: string) => {
-    const newPasswordFromApi = await resetPassword(id);
-    if (newPasswordFromApi) {
-      setNewPassword(newPasswordFromApi);
+    const success = await resetPassword(id);
+    if (success) {
       setIsResetModalOpen(true);
     }
   };
@@ -136,12 +152,14 @@ export default function AdminsPage() {
         )}
       </DashboardSection>
 
-      {/* Add Admin Modal */}
+      {/* Add Admin Modal with Filtered Active Volunteers */}
       <AddAdminModal 
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddAdmin}
         isSubmitting={isSaving}
+        activeVolunteers={activeVolunteers}
+        existingAdmins={admins}
       />
 
       {/* Delete Confirmation Modal */}
@@ -152,11 +170,10 @@ export default function AdminsPage() {
         isLoading={isSaving}
       />
 
-      {/* Password Reset Modal */}
+      {/* Password Reset Success Modal */}
       <PasswordResetModal 
         isOpen={isResetModalOpen}
         onClose={() => setIsResetModalOpen(false)}
-        newPassword={newPassword}
       />
     </div>
   );

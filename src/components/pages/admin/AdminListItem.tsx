@@ -10,13 +10,15 @@ interface AdminListItemProps {
   onDelete: (id: string) => void;
   onResetPassword: (id: string) => void;
   onToggleStatus: (id: string, newStatus: 'ACTIVE' | 'INACTIVE') => void;
+  showStatusToggle?: boolean;
 }
 
 const AdminListItem: React.FC<AdminListItemProps> = ({
   admin,
   onDelete,
   onResetPassword,
-  onToggleStatus
+  onToggleStatus,
+  showStatusToggle = false
 }) => {
   const handleCopyEmail = (email: string) => {
     navigator.clipboard.writeText(email);
@@ -42,7 +44,7 @@ const AdminListItem: React.FC<AdminListItemProps> = ({
           <div className="flex items-center gap-2 mt-2">
             <AdminStatusBadge 
               status={admin.status}
-              onClick={() => onToggleStatus(admin.id, admin.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE')}
+              onClick={showStatusToggle ? () => onToggleStatus(admin.id, admin.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE') : undefined}
             />
             <span className="text-xs text-gray-500">
               {formatDate(admin.createdAt)}

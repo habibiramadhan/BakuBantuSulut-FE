@@ -1,26 +1,30 @@
 // src/hooks/useAdmin.ts
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/contexts/ToastContext';
 import adminService, { AdminResponse, CreateAdminParams } from '@/services/adminService';
+import { VolunteerResponse } from '@/services/volunteerService';
 import { handleApiError } from '@/lib/api-error-utils';
 
 interface UseAdminReturn {
   admins: AdminResponse[];
+  activeVolunteers: VolunteerResponse[];
   isLoading: boolean;
   isSaving: boolean;
   fetchAdmins: () => Promise<AdminResponse[]>;
+  fetchActiveVolunteers: () => Promise<VolunteerResponse[]>;
   createAdmin: (data: CreateAdminParams) => Promise<boolean>;
   deleteAdmin: (id: string) => Promise<boolean>;
-  resetPassword: (id: string) => Promise<string | null>;
+  resetPassword: (id: string) => Promise<boolean>;
   updateStatus: (id: string, status: 'ACTIVE' | 'INACTIVE') => Promise<boolean>;
 }
 
 export function useAdmin(): UseAdminReturn {
   const [admins, setAdmins] = useState<AdminResponse[]>([]);
+  const [activeVolunteers, setActiveVolunteers] = useState<VolunteerResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const toast = useToast();
-
+  
   const fetchAdmins = useCallback(async (): Promise<AdminResponse[]> => {
     try {
       setIsLoading(true);
@@ -28,6 +32,22 @@ export function useAdmin(): UseAdminReturn {
       setAdmins(response.data);
       return response.data;
     } catch (error) {
+      console.error("Error fetching admins:", error);
+      handleApiError(error, toast);
+      return [];
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+  
+  const fetchActiveVolunteers = useCallback(async (): Promise<VolunteerResponse[]> => {
+    try {
+      setIsLoading(true);
+      const response = await adminService.getActiveVolunteers();
+      setActiveVolunteers(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching active volunteers:", error);
       handleApiError(error, toast);
       return [];
     } finally {
@@ -35,15 +55,20 @@ export function useAdmin(): UseAdminReturn {
     }
   }, [toast]);
 
+  // Load active volunteers when the hook is first used
+  useEffect(() => {
+    fetchActiveVolunteers();
+  }, [fetchActiveVolunteers]);
+
   const createAdmin = useCallback(async (data: CreateAdminParams): Promise<boolean> => {
     try {
       setIsSaving(true);
       const response = await adminService.createAdmin(data);
       
       // Update local state
-      setAdmins(prev => [...prev, response.data]);
+      setAdmins(prev => [...prev, response.data.admin]);
       
-      toast.success('Admin baru berhasil ditambahkan');
+      toast.success(response.message || 'Relawan berhasil dijadikan admin');
       return true;
     } catch (error) {
       handleApiError(error, toast);
@@ -71,16 +96,23 @@ export function useAdmin(): UseAdminReturn {
     }
   }, [toast]);
 
-  const resetPassword = useCallback(async (id: string): Promise<string | null> => {
+  const resetPassword = useCallback(async (id: string): Promise<boolean> => {
     try {
       setIsSaving(true);
       const response = await adminService.resetPassword(id);
       
-      toast.success('Password admin berhasil direset');
-      return response.data.newPassword;
+      // Update the admin in our local state if needed
+      const updatedAdmin = response.data;
+      setAdmins(prev => 
+        prev.map(admin => admin.id === id ? updatedAdmin : admin)
+      );
+      
+      // Show success message
+      toast.success(response.message || 'Password admin berhasil direset ke default');
+      return true;
     } catch (error) {
       handleApiError(error, toast);
-      return null;
+      return false;
     } finally {
       setIsSaving(false);
     }
@@ -109,9 +141,11 @@ export function useAdmin(): UseAdminReturn {
 
   return {
     admins,
+    activeVolunteers,
     isLoading,
     isSaving,
     fetchAdmins,
+    fetchActiveVolunteers,
     createAdmin,
     deleteAdmin,
     resetPassword,

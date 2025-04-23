@@ -1,50 +1,63 @@
 // src/components/pages/admin/AddAdminModal.tsx
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/Input';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
-import { useToast } from '@/contexts/ToastContext';
+import { VolunteerResponse } from '@/services/volunteerService';
+import { AdminResponse } from '@/services/adminService';
 
 interface AddAdminModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (email: string, password: string, role: 'ADMIN' | 'SUPERADMIN') => Promise<void>;
+  onSubmit: (volunteerId: string, role: 'ADMIN' | 'SUPERADMIN') => Promise<void>;
   isSubmitting: boolean;
+  activeVolunteers: VolunteerResponse[];
+  existingAdmins: AdminResponse[];
 }
 
 const AddAdminModal: React.FC<AddAdminModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  isSubmitting
+  isSubmitting,
+  activeVolunteers,
+  existingAdmins
 }) => {
-  const toast = useToast();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [volunteerId, setVolunteerId] = useState('');
   const [role, setRole] = useState<'ADMIN' | 'SUPERADMIN'>('ADMIN');
   const [errors, setErrors] = useState<{
-    email?: string;
-    password?: string;
+    volunteerId?: string;
   }>({});
+
+  // Filter out volunteers who are already admins
+  const availableVolunteers = useMemo(() => {
+    // Get all email addresses of existing admins
+    const adminEmails = existingAdmins.map(admin => admin.email.toLowerCase());
+    
+    // Filter out volunteers whose emails are in the adminEmails array
+    return activeVolunteers.filter(volunteer => 
+      !adminEmails.includes(volunteer.email.toLowerCase())
+    );
+  }, [activeVolunteers, existingAdmins]);
+
+  // Create options for volunteer select
+  const volunteerOptions = useMemo(() => {
+    const defaultOption = { value: '', label: '-- Pilih Relawan --' };
+    const options = availableVolunteers.map(volunteer => ({
+      value: volunteer.id,
+      label: `${volunteer.namaLengkap} - ${volunteer.email}`
+    }));
+    
+    return [defaultOption, ...options];
+  }, [availableVolunteers]);
 
   const validateForm = () => {
     const newErrors: {
-      email?: string;
-      password?: string;
+      volunteerId?: string;
     } = {};
     
-    // Email validation
-    if (!email) {
-      newErrors.email = 'Email harus diisi';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = 'Format email tidak valid';
-    }
-    
-    // Password validation
-    if (!password) {
-      newErrors.password = 'Password harus diisi';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password minimal 6 karakter';
+    // Volunteer selection validation
+    if (!volunteerId) {
+      newErrors.volunteerId = 'Relawan harus dipilih';
     }
     
     setErrors(newErrors);
@@ -58,11 +71,10 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({
       return;
     }
     
-    await onSubmit(email, password, role);
+    await onSubmit(volunteerId, role);
     
     // Clear form
-    setEmail('');
-    setPassword('');
+    setVolunteerId('');
     setRole('ADMIN');
     setErrors({});
   };
@@ -91,70 +103,72 @@ const AddAdminModal: React.FC<AddAdminModalProps> = ({
               Tambah Admin Baru
             </h3>
             <p className="mt-1 text-sm text-gray-500">
-              Buat akun admin baru untuk sistem BakuBantu
+              Jadikan relawan aktif sebagai admin
             </p>
           </div>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Masukkan email admin"
-              error={errors.email}
-              required
-              leftIcon={
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                </svg>
-              }
-            />
-            
-            <Input
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Masukkan password"
-              error={errors.password}
-              required
-              leftIcon={
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-              }
-            />
-            
-            <Select
-              label="Role"
-              value={role}
-              onChange={(e) => setRole(e.target.value as 'ADMIN' | 'SUPERADMIN')}
-              options={[
-                { value: 'ADMIN', label: 'Admin' },
-                { value: 'SUPERADMIN', label: 'Super Admin' }
-              ]}
-            />
-            
-            <div className="mt-6 flex justify-end space-x-3">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={onClose}
-              >
-                Batal
-              </Button>
-              <Button 
-                type="submit" 
-                variant="primary" 
-                isLoading={isSubmitting}
-                disabled={isSubmitting}
-              >
-                Tambah Admin
-              </Button>
+          {availableVolunteers.length === 0 ? (
+            <div className="py-4 text-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <h3 className="mt-2 text-sm font-medium text-gray-900">Tidak ada relawan tersedia</h3>
+              <p className="mt-1 text-sm text-gray-500">
+                Semua relawan aktif sudah menjadi admin.
+              </p>
+              <div className="mt-6">
+                <Button type="button" variant="primary" onClick={onClose}>
+                  Tutup
+                </Button>
+              </div>
             </div>
-          </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="volunteerId" className="block text-sm font-medium text-gray-700">
+                  Pilih Relawan
+                </label>
+                <Select
+                  id="volunteerId"
+                  value={volunteerId}
+                  onChange={(e) => setVolunteerId(e.target.value)}
+                  options={volunteerOptions}
+                  error={errors.volunteerId}
+                />
+                {errors.volunteerId && (
+                  <p className="mt-1 text-xs text-red-500">{errors.volunteerId}</p>
+                )}
+              </div>
+              
+              <Select
+                label="Role"
+                value={role}
+                onChange={(e) => setRole(e.target.value as 'ADMIN' | 'SUPERADMIN')}
+                options={[
+                  { value: 'ADMIN', label: 'Admin' },
+                  { value: 'SUPERADMIN', label: 'Super Admin' }
+                ]}
+              />
+              
+              <div className="mt-6 flex justify-end space-x-3">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={onClose}
+                >
+                  Batal
+                </Button>
+                <Button 
+                  type="submit" 
+                  variant="primary" 
+                  isLoading={isSubmitting}
+                  disabled={isSubmitting}
+                >
+                  Jadikan Admin
+                </Button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>

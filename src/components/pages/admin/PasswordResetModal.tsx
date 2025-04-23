@@ -1,28 +1,17 @@
 // src/components/pages/admin/PasswordResetModal.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 
 interface PasswordResetModalProps {
   isOpen: boolean;
   onClose: () => void;
-  newPassword: string;
+  // Removed unused resetSuccess prop
 }
 
 const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
   isOpen,
-  onClose,
-  newPassword
+  onClose
 }) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyPassword = () => {
-    navigator.clipboard.writeText(newPassword).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    });
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -39,39 +28,24 @@ const PasswordResetModal: React.FC<PasswordResetModalProps> = ({
                 </svg>
               </div>
               <h3 className="text-lg font-medium leading-6 text-gray-900">
-                Password Baru
+                Password Berhasil Direset
               </h3>
             </div>
             <p className="mt-3 text-sm text-gray-500">
-              Password telah direset. Simpan password baru di tempat yang aman.
+              Password admin telah berhasil direset ke password default.
             </p>
           </div>
           
           <div className="mb-4 mt-4">
-            <div className="flex items-center">
-              <Input
-                value={newPassword}
-                readOnly
-                className="font-mono"
-              />
-              <Button
-                type="button"
-                variant="primary"
-                className="ml-2"
-                onClick={handleCopyPassword}
-              >
-                {copied ? 'Tersalin!' : 'Salin'}
-              </Button>
-            </div>
-            <p className="mt-2 text-xs text-red-500">
-              PERHATIAN: Password hanya ditampilkan sekali. Pastikan Anda menyimpannya.
+            <p className="text-sm text-gray-600">
+              Password telah diganti dengan password default yang aman. Admin dapat mengubah passwordnya setelah login.
             </p>
           </div>
           
           <div className="mt-5 flex justify-end">
             <Button 
               type="button" 
-              variant="outline" 
+              variant="primary" 
               onClick={onClose}
             >
               Tutup
