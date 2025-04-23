@@ -86,11 +86,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
         </svg>
       ),
-      roles: ['ADMIN', 'SUPERADMIN'],
-      badge: {
-        text: '42',
-        variant: 'primary'
-      }
+      roles: ['ADMIN', 'SUPERADMIN']
     },
     {
       name: 'Relawan',
@@ -100,33 +96,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
         </svg>
       ),
-      roles: ['ADMIN', 'SUPERADMIN'],
-      badge: {
-        text: 'New',
-        variant: 'success'
-      }
-    },
-    {
-      name: 'Blog',
-      href: '/dashboard/blog',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clipRule="evenodd" />
-          <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z" />
-        </svg>
-      ),
-      roles: ['ADMIN', 'SUPERADMIN'],
-    },
-    {
-      name: 'Program',
-      href: '/dashboard/programs',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
-        </svg>
-      ),
-      roles: ['ADMIN', 'SUPERADMIN'],
-    },
+      roles: ['ADMIN', 'SUPERADMIN']
+    }
   ];
 
   // Admin-specific navigation items
@@ -137,6 +108,16 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+        </svg>
+      ),
+      roles: ['SUPERADMIN'],
+    },
+    {
+      name: 'Yayasan',
+      href: '/dashboard/foundations',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
         </svg>
       ),
       roles: ['SUPERADMIN'],
@@ -153,8 +134,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
     },
   ];
 
-  // Support navigation items
-  const supportNavigation: NavItem[] = [
+  // Settings navigation
+  const settingsNavigation: NavItem[] = [
     {
       name: 'Pengaturan',
       href: '/dashboard/settings',
@@ -164,23 +145,13 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         </svg>
       ),
       roles: ['ADMIN', 'SUPERADMIN'],
-    },
-    {
-      name: 'Bantuan',
-      href: '/dashboard/help',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-        </svg>
-      ),
-      roles: ['ADMIN', 'SUPERADMIN'],
-    },
+    }
   ];
 
   // Filter navigation items based on user role
   const filteredMainNav = mainNavigation.filter(item => item.roles.includes(userRole));
   const filteredAdminNav = adminNavigation.filter(item => item.roles.includes(userRole));
-  const filteredSupportNav = supportNavigation.filter(item => item.roles.includes(userRole));
+  const filteredSettingsNav = settingsNavigation.filter(item => item.roles.includes(userRole));
 
   // Calculate sidebar classes based on state
   const sidebarClasses = cn(
@@ -221,28 +192,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           <span className={(!isMobile && !isOpen) ? "" : "mr-3"}>{item.icon}</span>
           {(isMobile || isOpen) && <span>{item.name}</span>}
           
-          {/* Badge for expanded sidebar */}
-          {item.badge && (isOpen || isMobile) && (
-            <span className={cn(
-              "ml-auto inline-flex items-center px-2 py-0.5 rounded text-xs font-medium",
-              item.badge.variant === 'primary' && "bg-babyBlue-light text-babyBlue-dark",
-              item.badge.variant === 'secondary' && "bg-lavender-light text-lavender-dark",
-              item.badge.variant === 'accent' && "bg-poppy-light text-poppy-dark",
-              item.badge.variant === 'success' && "bg-green-100 text-green-800",
-              item.badge.variant === 'warning' && "bg-yellow-100 text-yellow-800",
-              item.badge.variant === 'danger' && "bg-red-100 text-red-800"
-            )}
-            >
-              {item.badge.text}
-            </span>
-          )}
-          
-          {/* Badge for collapsed sidebar */}
-          {item.badge && !isOpen && !isMobile && (
-            <span className="absolute top-0 right-0 -mt-1 -mr-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-              {item.badge.text.length <= 2 ? item.badge.text : '!'}
-            </span>
-          )}
+
         </Link>
       </li>
     );
@@ -333,16 +283,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
             </>
           )}
           
-          {/* Support Navigation Section */}
+          {/* Settings Section */}
           <div className="h-px bg-gray-200 mx-2 my-4"></div>
           <div className={(!isMobile && !isOpen) ? "px-2" : "px-4"}>
-            {(isMobile || isOpen) && (
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                Dukungan
-              </p>
-            )}
             <ul className="space-y-2">
-              {filteredSupportNav.map((item) => (
+              {filteredSettingsNav.map((item) => (
                 <NavLink key={item.name} item={item} />
               ))}
             </ul>
