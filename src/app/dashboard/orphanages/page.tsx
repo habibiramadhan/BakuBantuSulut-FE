@@ -1,91 +1,76 @@
-// src/app/dashboard/orphanages/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import Link from 'next/link';
+import orphanageService, { Orphanage } from '@/services/orphanageService';
+import { useToast } from '@/contexts/ToastContext';
 
-interface Orphanage {
-  id: string;
-  name: string;
-  location: string;
-  region: string;
-  childrenCount: number;
-  status: 'active' | 'inactive' | 'pending';
-  lastUpdated: string;
+interface Region {
+  id: number;
+  nama: string;
 }
 
 export default function OrphanagesPage() {
-  // Mock data - in a real app, this would come from an API
-  const [orphanages, setOrphanages] = useState<Orphanage[]>([
-    {
-      id: '1',
-      name: 'Panti Asuhan Kasih Sayang',
-      location: 'Jl. Kenanga No. 123, Jakarta Selatan',
-      region: 'DKI Jakarta',
-      childrenCount: 45,
-      status: 'active',
-      lastUpdated: '2025-04-10'
-    },
-    {
-      id: '2',
-      name: 'Rumah Yatim Bahagia',
-      location: 'Jl. Melati No. 45, Bandung',
-      region: 'Jawa Barat',
-      childrenCount: 32,
-      status: 'active',
-      lastUpdated: '2025-04-05'
-    },
-    {
-      id: '3',
-      name: 'Panti Asuhan Cahaya Kasih',
-      location: 'Jl. Anggrek No. 67, Surabaya',
-      region: 'Jawa Timur',
-      childrenCount: 28,
-      status: 'inactive',
-      lastUpdated: '2025-03-20'
-    },
-    {
-      id: '4',
-      name: 'Yayasan Peduli Anak',
-      location: 'Jl. Flamboyan No. 12, Makassar',
-      region: 'Sulawesi Selatan',
-      childrenCount: 37,
-      status: 'active',
-      lastUpdated: '2025-04-08'
-    },
-    {
-      id: '5',
-      name: 'Panti Asuhan Bina Karya',
-      location: 'Jl. Dahlia No. 89, Medan',
-      region: 'Sumatera Utara',
-      childrenCount: 23,
-      status: 'pending',
-      lastUpdated: '2025-04-12'
-    }
-  ]);
-
+  const [orphanages, setOrphanages] = useState<Orphanage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState('all');
-  const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedRegion, setSelectedRegion] = useState<string>('all');
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [regions, setRegions] = useState<Region[]>([]);
+  const toast = useToast();
+
+  useEffect(() => {
+    fetchOrphanages();
+  }, []);
+
+  const fetchOrphanages = async () => {
+    setLoading(true);
+    try {
+      const response = await orphanageService.getAllOrphanages();
+      setOrphanages(response.data);
+      
+      // Extract unique regions for the filter
+      const uniqueRegions = Array.from(
+        new Set(
+          response.data
+            .filter(o => o.wilayah)
+            .map(o => JSON.stringify({ id: o.wilayah?.id, nama: o.wilayah?.nama }))
+        )
+      ).map(str => JSON.parse(str) as Region);
+      
+      setRegions(uniqueRegions);
+      setError(null);
+    } catch (err) {
+      console.error('Failed to fetch orphanages:', err);
+      setError('Gagal memuat data panti asuhan');
+      toast.error('Gagal memuat data panti asuhan');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filtered orphanages based on search and filters
   const filteredOrphanages = orphanages.filter(orphanage => {
-    const matchesSearch = orphanage.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          orphanage.location.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRegion = selectedRegion === 'all' || orphanage.region === selectedRegion;
-    const matchesStatus = selectedStatus === 'all' || orphanage.status === selectedStatus;
+    const matchesSearch = 
+      orphanage.namaPanti.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      orphanage.deskripsiSingkat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (orphanage.wilayah?.nama && orphanage.wilayah.nama.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesRegion = selectedRegion === 'all' || 
+      (orphanage.wilayah && orphanage.wilayah.id.toString() === selectedRegion);
+    
+    const matchesStatus = selectedStatus === 'all' || orphanage.status.toLowerCase() === selectedStatus.toLowerCase();
     
     return matchesSearch && matchesRegion && matchesStatus;
   });
 
-  // Get unique regions for the filter
-  const regions = Array.from(new Set(orphanages.map(o => o.region)));
-
   // Status badge colors
-  const getStatusBadge = (status: Orphanage['status']) => {
-    switch (status) {
+  const getStatusBadge = (status: string) => {
+    const statusLower = status.toLowerCase();
+    switch (statusLower) {
       case 'active':
         return <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Aktif</span>;
       case 'inactive':
@@ -97,20 +82,51 @@ export default function OrphanagesPage() {
     }
   };
 
+  // Format date to Indonesian format
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('id-ID', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedRegion(e.target.value);
+  };
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedStatus(e.target.value);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 pb-10">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Panti Asuhan</h1>
-        <Button 
-          variant="primary" 
-          leftIcon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-          }
-        >
-          Tambah Panti Asuhan
-        </Button>
+        <Link href="/dashboard/orphanages/add">
+          <Button 
+            variant="primary" 
+            leftIcon={
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+            }
+          >
+            Tambah Panti Asuhan
+          </Button>
+        </Link>
       </div>
 
       {/* Filters and Search */}
@@ -120,7 +136,7 @@ export default function OrphanagesPage() {
             <Input
               placeholder="Cari nama panti atau lokasi..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
               leftIcon={
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
@@ -135,11 +151,11 @@ export default function OrphanagesPage() {
             <select
               className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue"
               value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
+              onChange={handleRegionChange}
             >
               <option value="all">Semua Wilayah</option>
               {regions.map(region => (
-                <option key={region} value={region}>{region}</option>
+                <option key={region.id} value={region.id.toString()}>{region.nama}</option>
               ))}
             </select>
           </div>
@@ -150,7 +166,7 @@ export default function OrphanagesPage() {
             <select
               className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue"
               value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
+              onChange={handleStatusChange}
             >
               <option value="all">Semua Status</option>
               <option value="active">Aktif</option>
@@ -163,6 +179,18 @@ export default function OrphanagesPage() {
 
       {/* Orphanages List */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        {error && (
+          <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
+            <p>{error}</p>
+            <button 
+              onClick={fetchOrphanages}
+              className="mt-2 text-red-600 hover:text-red-800 underline"
+            >
+              Coba lagi
+            </button>
+          </div>
+        )}
+
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -171,7 +199,7 @@ export default function OrphanagesPage() {
                   Nama Panti
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Lokasi
+                  Yayasan
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Wilayah
@@ -195,53 +223,53 @@ export default function OrphanagesPage() {
                 <tr key={orphanage.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
-                      {orphanage.name}
+                      {orphanage.namaPanti}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{orphanage.location}</div>
+                    <div className="text-sm text-gray-500">{orphanage.yayasan?.namaYayasan || '-'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{orphanage.region}</div>
+                    <div className="text-sm text-gray-500">{orphanage.wilayah?.nama || '-'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{orphanage.childrenCount}</div>
+                    <div className="text-sm text-gray-900">{orphanage.jumlahAnak}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {getStatusBadge(orphanage.status)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(orphanage.lastUpdated).toLocaleDateString('id-ID', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                    {formatDate(orphanage.updatedAt)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        leftIcon={
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                          </svg>
-                        }
-                      >
-                        Lihat
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        leftIcon={
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                          </svg>
-                        }
-                      >
-                        Edit
-                      </Button>
+                      <Link href={`/orphanages/${orphanage.id}`}>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          leftIcon={
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                              <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                            </svg>
+                          }
+                        >
+                          Lihat
+                        </Button>
+                      </Link>
+                      <Link href={`/dashboard/orphanages/edit/${orphanage.id}`}>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          leftIcon={
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                          }
+                        >
+                          Edit
+                        </Button>
+                      </Link>
                     </div>
                   </td>
                 </tr>
@@ -251,7 +279,7 @@ export default function OrphanagesPage() {
         </div>
         
         {/* Empty State */}
-        {filteredOrphanages.length === 0 && (
+        {filteredOrphanages.length === 0 && !loading && !error && (
           <div className="py-12 text-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -259,7 +287,9 @@ export default function OrphanagesPage() {
             <h3 className="mt-4 text-lg font-medium text-gray-900">Tidak ada data yang ditemukan</h3>
             <p className="mt-1 text-gray-500">Coba ubah filter pencarian atau tambahkan panti asuhan baru.</p>
             <div className="mt-6">
-              <Button variant="primary">Tambah Panti Asuhan</Button>
+              <Link href="/dashboard/orphanages/add">
+                <Button variant="primary">Tambah Panti Asuhan</Button>
+              </Link>
             </div>
           </div>
         )}

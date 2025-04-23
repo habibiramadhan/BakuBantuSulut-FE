@@ -1,70 +1,102 @@
-// src/app/dashboard/orphanages/add/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Checkbox } from '@/components/ui/Checkbox';
 import { useToast } from '@/contexts/ToastContext';
+import orphanageService, { 
+  Orphanage, 
+  OrphanageDetail,
+  UpdateOrphanageDetailParams
+} from '@/services/orphanageService';
 
-interface FormData {
-  name: string;
-  address: string;
-  region: string;
-  phoneNumber: string;
-  email: string;
-  contactPerson: string;
-  childrenCount: number;
-  description: string;
-  facilities: string[];
-  status: 'active' | 'inactive';
+// Type definitions
+interface Wilayah {
+  id: number;
+  nama: string;
+  status?: string;
+}
+
+interface Yayasan {
+  id: number;
+  namaYayasan: string;
+  status?: string;
+}
+
+interface OrphanageFormData {
+  namaPanti: string;
+  deskripsiSingkat: string;
+  jumlahAnak: number;
+  status: 'ACTIVE' | 'INACTIVE' | 'PENDING';
+  yayasanId: number | null;
+  wilayahId: number | null;
+  fotoUtama: File | null;
 }
 
 export default function AddOrphanagePage() {
   const router = useRouter();
   const toast = useToast();
+  const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [wilayahs, setWilayahs] = useState<Wilayah[]>([]);
+  const [yayasans, setYayasans] = useState<Yayasan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [createdOrphanage, setCreatedOrphanage] = useState<Orphanage | null>(null);
 
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    address: '',
-    region: '',
-    phoneNumber: '',
-    email: '',
-    contactPerson: '',
-    childrenCount: 0,
-    description: '',
-    facilities: [],
-    status: 'active'
+  // Form state for step 1
+  const [formData, setFormData] = useState<OrphanageFormData>({
+    namaPanti: '',
+    deskripsiSingkat: '',
+    jumlahAnak: 0,
+    status: 'ACTIVE',
+    yayasanId: null,
+    wilayahId: null,
+    fotoUtama: null
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  // Form state for step 2
+  const [detailFormData, setDetailFormData] = useState<UpdateOrphanageDetailParams>({
+    fokusPelayanan: 'Umum',
+    alamatLengkap: '',
+    deskripsiLengkap: '',
+    jumlahPengasuh: 0,
+    jumlahPenghuni: {
+      laki_laki: 0,
+      perempuan: 0
+    },
+    kategoriKebutuhan: [],
+    sumbanganDiterima: []
+  });
 
-  const facilityOptions = [
-    { id: 'library', label: 'Perpustakaan' },
-    { id: 'computer_lab', label: 'Laboratorium Komputer' },
-    { id: 'playground', label: 'Taman Bermain' },
-    { id: 'sports_field', label: 'Lapangan Olahraga' },
-    { id: 'kitchen', label: 'Dapur' },
-    { id: 'medical_room', label: 'Ruang Kesehatan' },
-    { id: 'study_room', label: 'Ruang Belajar' },
-    { id: 'prayer_room', label: 'Musholla' }
-  ];
+  // Validation state
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const regionOptions = [
-    'DKI Jakarta',
-    'Jawa Barat',
-    'Jawa Tengah',
-    'Jawa Timur',
-    'Bali',
-    'Sumatera Utara',
-    'Sumatera Selatan',
-    'Kalimantan Timur',
-    'Sulawesi Selatan',
-    'Papua'
-  ];
+  // Fetch wilayahs and yayasans data when component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch active wilayahs
+        const wilayahResponse = await orphanageService.getActiveWilayah();
+        setWilayahs(wilayahResponse.data || []);
 
+        // Fetch active yayasans
+        const yayasanResponse = await orphanageService.getActiveYayasan();
+        setYayasans(yayasanResponse.data || []);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        toast.error('Gagal memuat data wilayah dan yayasan');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [toast]);
+
+  // Update form data for step 1
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -73,77 +105,124 @@ export default function AddOrphanagePage() {
     }));
     
     // Clear error when field is edited
-    if (errors[name as keyof FormData]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
     }
   };
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const numberValue = parseInt(value) || 0;
+    const numberValue = parseInt(value, 10) || 0;
     setFormData(prev => ({
       ...prev,
       [name]: numberValue
     }));
   };
 
-  const handleFacilityChange = (facilityId: string) => {
-    setFormData(prev => {
-      const facilities = prev.facilities.includes(facilityId)
-        ? prev.facilities.filter(id => id !== facilityId)
-        : [...prev.facilities, facilityId];
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value ? parseInt(value, 10) : null
+    }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      setFormData(prev => ({
+        ...prev,
+        fotoUtama: file
+      }));
+
+      // Create a preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Update form data for step 2
+  const handleDetailInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setDetailFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleDetailNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const numberValue = parseInt(value, 10) || 0;
+    setDetailFormData(prev => ({
+      ...prev,
+      [name]: numberValue
+    }));
+  };
+
+  const handlePenghuniChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const gender = name === 'laki_laki' ? 'laki_laki' : 'perempuan';
+    const numberValue = parseInt(value, 10) || 0;
+    
+    setDetailFormData(prev => ({
+      ...prev,
+      jumlahPenghuni: {
+        ...prev.jumlahPenghuni,
+        [gender]: numberValue
+      }
+    }));
+  };
+
+  const handleCheckboxChange = (category: string, type: 'kategoriKebutuhan' | 'sumbanganDiterima') => {
+    setDetailFormData(prev => {
+      const currentCategories = prev[type];
+      const newCategories = currentCategories.includes(category)
+        ? currentCategories.filter(item => item !== category)
+        : [...currentCategories, category];
       
       return {
         ...prev,
-        facilities
+        [type]: newCategories
       };
     });
   };
 
-  const validateForm = (): boolean => {
-    const newErrors: Partial<Record<keyof FormData, string>> = {};
+  // Validate first form
+  const validateFirstForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
     
-    if (!formData.name.trim()) {
-      newErrors.name = 'Nama panti asuhan wajib diisi';
+    if (!formData.namaPanti.trim()) {
+      newErrors.namaPanti = 'Nama panti asuhan wajib diisi';
     }
     
-    if (!formData.address.trim()) {
-      newErrors.address = 'Alamat wajib diisi';
+    if (!formData.deskripsiSingkat.trim()) {
+      newErrors.deskripsiSingkat = 'Deskripsi singkat wajib diisi';
     }
     
-    if (!formData.region) {
-      newErrors.region = 'Wilayah wajib dipilih';
+    if (formData.wilayahId === null) {
+      newErrors.wilayahId = 'Wilayah wajib dipilih';
     }
     
-    if (!formData.phoneNumber.trim()) {
-      newErrors.phoneNumber = 'Nomor telepon wajib diisi';
-    } else if (!/^[0-9+\-\s]+$/.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = 'Format nomor telepon tidak valid';
-    }
-    
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Format email tidak valid';
-    }
-    
-    if (!formData.contactPerson.trim()) {
-      newErrors.contactPerson = 'Nama kontak wajib diisi';
-    }
-    
-    if (formData.childrenCount <= 0) {
-      newErrors.childrenCount = 'Jumlah anak tidak valid';
+    if (formData.yayasanId === null) {
+      newErrors.yayasanId = 'Yayasan wajib dipilih';
     }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
+  // Submit first form
+  const submitFirstForm = async () => {
+    if (!validateFirstForm()) {
       toast.error('Mohon perbaiki kesalahan pada formulir');
       return;
     }
@@ -151,225 +230,511 @@ export default function AddOrphanagePage() {
     setIsSubmitting(true);
     
     try {
-      // In a real app, this would be an API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Create FormData object for sending file
+      const formDataObj = new FormData();
       
-      toast.success('Panti asuhan berhasil ditambahkan');
-      router.push('/dashboard/orphanages');
+      // Add all fields to FormData
+      formDataObj.append('namaPanti', formData.namaPanti);
+      formDataObj.append('deskripsiSingkat', formData.deskripsiSingkat);
+      formDataObj.append('yayasanId', formData.yayasanId!.toString());
+      formDataObj.append('wilayahId', formData.wilayahId!.toString());
+      
+      // Add file if available
+      if (formData.fotoUtama) {
+        formDataObj.append('fotoUtama', formData.fotoUtama);
+      }
+      
+      // Send request to create orphanage using the service
+      const response = await orphanageService.createOrphanage(formDataObj);
+      
+      // Store the created orphanage data
+      setCreatedOrphanage(response.data);
+      
+      // Initialize detail form with description from first step
+      setDetailFormData(prev => ({
+        ...prev,
+        deskripsiLengkap: formData.deskripsiSingkat
+      }));
+      
+      toast.success('Data dasar panti asuhan berhasil disimpan');
+      
+      // Move to next step
+      setStep(2);
     } catch (error) {
-      toast.error('Gagal menambahkan panti asuhan. Silakan coba lagi.');
+      console.error('Error creating orphanage:', error);
+      toast.error('Gagal menyimpan data panti asuhan');
+    } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Submit second form
+  const submitDetailForm = async () => {
+    if (!createdOrphanage) {
+      toast.error('Data panti asuhan tidak ditemukan');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Send request to update orphanage detail using the service
+      await orphanageService.updateOrphanageDetail(
+        createdOrphanage.id, 
+        detailFormData as UpdateOrphanageDetailParams
+      );
+      
+      toast.success('Detail panti asuhan berhasil disimpan');
+      
+      // Redirect to orphanage list page
+      router.push('/dashboard/orphanages');
+    } catch (error) {
+      console.error('Error updating orphanage detail:', error);
+      toast.error('Gagal menyimpan detail panti asuhan');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Kategori kebutuhan options
+  const kategoriKebutuhanOptions = [
+    'Sembako',
+    'Peralatan Sekolah',
+    'Peralatan Mandi',
+    'Perlengkapan Belajar',
+    'Mainan Edukatif',
+    'Pakaian',
+    'Obat-obatan',
+    'Kebutuhan Bayi'
+  ];
+
+  // Sumbangan options
+  const sumbanganOptions = [
+    'Pangan',
+    'Sandang',
+    'Tunai',
+    'Kebutuhan Asuh',
+    'Layanan Kesehatan',
+    'Pendidikan',
+    'Transportasi',
+    'Kebutuhan Ibadah'
+  ];
+
+  // Fokus pelayanan options
+  const fokusPelayananOptions = [
+    'Umum',
+    'Anak Yatim Piatu',
+    'Dhuafa',
+    'Anak dengan Kebutuhan Khusus',
+    'Lansia',
+    'Anak Jalanan',
+    'Anak Yatim Piatu dan Dhuafa',
+    'Anak Yatim Piatu, Dhuafa, dan Anak dengan Kebutuhan Khusus'
+  ];
 
   return (
     <div className="space-y-6 pb-10">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tambah Panti Asuhan</h1>
-          <p className="text-gray-600 mt-1">Isi formulir di bawah untuk menambahkan panti asuhan baru</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {step === 1 ? 'Tambah Panti Asuhan' : 'Detail Panti Asuhan'}
+          </h1>
+          <p className="text-gray-600 mt-1">
+            {step === 1 
+              ? 'Isi formulir di bawah untuk menambahkan panti asuhan baru' 
+              : 'Lengkapi detail panti asuhan untuk melanjutkan'}
+          </p>
         </div>
         <Button
           variant="outline"
-          onClick={() => router.back()}
+          onClick={() => step === 1 ? router.back() : setStep(1)}
           leftIcon={
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
             </svg>
           }
         >
-          Kembali
+          {step === 1 ? 'Kembali' : 'Sebelumnya'}
         </Button>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <Input
-              label="Nama Panti Asuhan"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              error={errors.name}
-              required
-            />
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Wilayah
-              </label>
-              <select
-                name="region"
-                className={`h-10 w-full rounded-md border ${errors.region ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue`}
-                value={formData.region}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Pilih Wilayah</option>
-                {regionOptions.map(region => (
-                  <option key={region} value={region}>{region}</option>
-                ))}
-              </select>
-              {errors.region && (
-                <p className="mt-1.5 text-sm text-red-500 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  {errors.region}
-                </p>
-              )}
-            </div>
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Alamat Lengkap
-              </label>
-              <textarea
-                name="address"
-                rows={3}
-                className={`w-full rounded-md border ${errors.address ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue`}
-                value={formData.address}
-                onChange={handleInputChange}
-                required
-              ></textarea>
-              {errors.address && (
-                <p className="mt-1.5 text-sm text-red-500 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  {errors.address}
-                </p>
-              )}
-            </div>
-            
-            <Input
-              label="Nomor Telepon"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-              error={errors.phoneNumber}
-              required
-            />
-            
-            <Input
-              label="Email"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              error={errors.email}
-            />
-            
-            <Input
-              label="Nama Kontak"
-              name="contactPerson"
-              value={formData.contactPerson}
-              onChange={handleInputChange}
-              error={errors.contactPerson}
-              required
-            />
-            
-            <Input
-              label="Jumlah Anak"
-              type="number"
-              name="childrenCount"
-              value={formData.childrenCount.toString()}
-              onChange={handleNumberChange}
-              error={errors.childrenCount}
-              required
-              min={0}
-            />
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Deskripsi
-              </label>
-              <textarea
-                name="description"
-                rows={4}
-                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue"
-                value={formData.description}
-                onChange={handleInputChange}
-              ></textarea>
-            </div>
-            
-            <div className="md:col-span-2">
-              <fieldset>
-                <legend className="block text-sm font-medium text-gray-700 mb-2">
-                  Fasilitas
-                </legend>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {facilityOptions.map(facility => (
-                    <Checkbox
-                      key={facility.id}
-                      id={`facility-${facility.id}`}
-                      label={facility.label}
-                      checked={formData.facilities.includes(facility.id)}
-                      onChange={() => handleFacilityChange(facility.id)}
-                    />
-                  ))}
-                </div>
-              </fieldset>
-            </div>
-            
-            <div>
-              <fieldset>
-                <legend className="block text-sm font-medium text-gray-700 mb-2">
-                  Status
-                </legend>
-                <div className="flex space-x-4">
-                  <div className="flex items-center">
-                    <input
-                      id="status-active"
-                      name="status"
-                      type="radio"
-                      value="active"
-                      checked={formData.status === 'active'}
-                      onChange={() => setFormData(prev => ({ ...prev, status: 'active' }))}
-                      className="h-4 w-4 border-gray-300 text-babyBlue focus:ring-babyBlue"
-                    />
-                    <label htmlFor="status-active" className="ml-2 block text-sm text-gray-700">
-                      Aktif
+      {isLoading && step === 1 ? (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      ) : (
+        <>
+          {/* Step 1: Basic Orphanage Information */}
+          {step === 1 && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+              <form className="space-y-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <Input
+                    label="Nama Panti Asuhan"
+                    name="namaPanti"
+                    value={formData.namaPanti}
+                    onChange={handleInputChange}
+                    error={errors.namaPanti}
+                    required
+                  />
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Wilayah <span className="text-red-500">*</span>
                     </label>
+                    <select
+                      name="wilayahId"
+                      className={`h-10 w-full rounded-md border ${errors.wilayahId ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue`}
+                      value={formData.wilayahId || ''}
+                      onChange={handleSelectChange}
+                      required
+                    >
+                      <option value="">Pilih Wilayah</option>
+                      {wilayahs.map(wilayah => (
+                        <option key={wilayah.id} value={wilayah.id}>{wilayah.nama}</option>
+                      ))}
+                    </select>
+                    {errors.wilayahId && (
+                      <p className="mt-1.5 text-sm text-red-500 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        {errors.wilayahId}
+                      </p>
+                    )}
                   </div>
-                  <div className="flex items-center">
-                    <input
-                      id="status-inactive"
-                      name="status"
-                      type="radio"
-                      value="inactive"
-                      checked={formData.status === 'inactive'}
-                      onChange={() => setFormData(prev => ({ ...prev, status: 'inactive' }))}
-                      className="h-4 w-4 border-gray-300 text-babyBlue focus:ring-babyBlue"
-                    />
-                    <label htmlFor="status-inactive" className="ml-2 block text-sm text-gray-700">
-                      Tidak Aktif
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Yayasan <span className="text-red-500">*</span>
                     </label>
+                    <select
+                      name="yayasanId"
+                      className={`h-10 w-full rounded-md border ${errors.yayasanId ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue`}
+                      value={formData.yayasanId || ''}
+                      onChange={handleSelectChange}
+                      required
+                    >
+                      <option value="">Pilih Yayasan</option>
+                      {yayasans.map(yayasan => (
+                        <option key={yayasan.id} value={yayasan.id}>{yayasan.namaYayasan}</option>
+                      ))}
+                    </select>
+                    {errors.yayasanId && (
+                      <p className="mt-1.5 text-sm text-red-500 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        {errors.yayasanId}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Deskripsi Singkat <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="deskripsiSingkat"
+                      rows={3}
+                      className={`w-full rounded-md border ${errors.deskripsiSingkat ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue`}
+                      value={formData.deskripsiSingkat}
+                      onChange={handleInputChange}
+                      required
+                    ></textarea>
+                    {errors.deskripsiSingkat && (
+                      <p className="mt-1.5 text-sm text-red-500 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        {errors.deskripsiSingkat}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Status
+                    </label>
+                    <div className="flex space-x-4">
+                      <div className="flex items-center">
+                        <input
+                          id="status-active"
+                          name="status"
+                          type="radio"
+                          value="ACTIVE"
+                          checked={formData.status === 'ACTIVE'}
+                          onChange={() => setFormData(prev => ({ ...prev, status: 'ACTIVE' }))}
+                          className="h-4 w-4 border-gray-300 text-babyBlue focus:ring-babyBlue"
+                        />
+                        <label htmlFor="status-active" className="ml-2 block text-sm text-gray-700">
+                          Aktif
+                        </label>
+                      </div>
+                      <div className="flex items-center">
+                        <input
+                          id="status-inactive"
+                          name="status"
+                          type="radio"
+                          value="INACTIVE"
+                          checked={formData.status === 'INACTIVE'}
+                          onChange={() => setFormData(prev => ({ ...prev, status: 'INACTIVE' }))}
+                          className="h-4 w-4 border-gray-300 text-babyBlue focus:ring-babyBlue"
+                        />
+                        <label htmlFor="status-inactive" className="ml-2 block text-sm text-gray-700">
+                          Tidak Aktif
+                        </label>
+                      </div>
+                      <div className="flex items-center">
+                        <input
+                          id="status-pending"
+                          name="status"
+                          type="radio"
+                          value="PENDING"
+                          checked={formData.status === 'PENDING'}
+                          onChange={() => setFormData(prev => ({ ...prev, status: 'PENDING' }))}
+                          className="h-4 w-4 border-gray-300 text-babyBlue focus:ring-babyBlue"
+                        />
+                        <label htmlFor="status-pending" className="ml-2 block text-sm text-gray-700">
+                          Menunggu
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Foto Utama
+                    </label>
+                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                      <div className="space-y-1 text-center">
+                        {selectedImage ? (
+                          <div className="relative">
+                            <img 
+                              src={selectedImage} 
+                              alt="Preview" 
+                              className="mx-auto h-40 w-auto object-cover" 
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedImage(null);
+                                setFormData(prev => ({ ...prev, fotoUtama: null }));
+                              }}
+                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                              </svg>
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <svg
+                              className="mx-auto h-12 w-12 text-gray-400"
+                              stroke="currentColor"
+                              fill="none"
+                              viewBox="0 0 48 48"
+                              aria-hidden="true"
+                            >
+                              <path
+                                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                strokeWidth={2}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            <div className="flex text-sm text-gray-600">
+                              <label
+                                htmlFor="file-upload"
+                                className="relative cursor-pointer bg-white rounded-md font-medium text-babyBlue hover:text-babyBlue-dark focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-babyBlue"
+                              >
+                                <span>Upload foto</span>
+                                <input
+                                  id="file-upload"
+                                  name="file-upload"
+                                  type="file"
+                                  className="sr-only"
+                                  accept="image/*"
+                                  onChange={handleFileChange}
+                                />
+                              </label>
+                              <p className="pl-1">atau drag and drop</p>
+                            </div>
+                            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </fieldset>
+                
+                <div className="flex justify-end space-x-4 pt-4 border-t">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => router.back()}
+                    disabled={isSubmitting}
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={submitFirstForm}
+                    isLoading={isSubmitting}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Menyimpan...' : 'Selanjutnya'}
+                  </Button>
+                </div>
+              </form>
             </div>
-          </div>
-          
-          <div className="flex justify-end space-x-4 pt-4 border-t">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.back()}
-              disabled={isSubmitting}
-            >
-              Batal
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              isLoading={isSubmitting}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Menyimpan...' : 'Simpan Panti Asuhan'}
-            </Button>
-          </div>
-        </form>
-      </div>
+          )}
+
+          {/* Step 2: Orphanage Details */}
+          {step === 2 && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+              <form className="space-y-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fokus Pelayanan
+                    </label>
+                    <select
+                      name="fokusPelayanan"
+                      className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue"
+                      value={detailFormData.fokusPelayanan}
+                      onChange={handleDetailInputChange}
+                    >
+                      {fokusPelayananOptions.map(option => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <Input
+                    label="Jumlah Pengasuh"
+                    type="number"
+                    name="jumlahPengasuh"
+                    value={detailFormData.jumlahPengasuh.toString()}
+                    onChange={handleDetailNumberChange}
+                    min={0}
+                  />
+                  
+                  <Input
+                    label="Jumlah Penghuni Laki-laki"
+                    type="number"
+                    name="laki_laki"
+                    value={detailFormData.jumlahPenghuni.laki_laki.toString()}
+                    onChange={handlePenghuniChange}
+                    min={0}
+                  />
+                  
+                  <Input
+                    label="Jumlah Penghuni Perempuan"
+                    type="number"
+                    name="perempuan"
+                    value={detailFormData.jumlahPenghuni.perempuan.toString()}
+                    onChange={handlePenghuniChange}
+                    min={0}
+                  />
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Alamat Lengkap
+                    </label>
+                    <textarea
+                      name="alamatLengkap"
+                      rows={3}
+                      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue"
+                      value={detailFormData.alamatLengkap}
+                      onChange={handleDetailInputChange}
+                    ></textarea>
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Deskripsi Lengkap
+                    </label>
+                    <textarea
+                      name="deskripsiLengkap"
+                      rows={4}
+                      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-babyBlue focus:outline-none focus:ring-1 focus:ring-babyBlue"
+                      value={detailFormData.deskripsiLengkap}
+                      onChange={handleDetailInputChange}
+                    ></textarea>
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Kategori Kebutuhan
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {kategoriKebutuhanOptions.map(category => (
+                        <div key={category} className="flex items-center">
+                          <input
+                            id={`kategori-${category}`}
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-gray-300 text-babyBlue focus:ring-babyBlue"
+                            checked={detailFormData.kategoriKebutuhan.includes(category)}
+                            onChange={() => handleCheckboxChange(category, 'kategoriKebutuhan')}
+                          />
+                          <label htmlFor={`kategori-${category}`} className="ml-2 block text-sm text-gray-700">
+                            {category}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Sumbangan Diterima
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {sumbanganOptions.map(category => (
+                        <div key={category} className="flex items-center">
+                          <input
+                            id={`sumbangan-${category}`}
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-gray-300 text-babyBlue focus:ring-babyBlue"
+                            checked={detailFormData.sumbanganDiterima.includes(category)}
+                            onChange={() => handleCheckboxChange(category, 'sumbanganDiterima')}
+                          />
+                          <label htmlFor={`sumbangan-${category}`} className="ml-2 block text-sm text-gray-700">
+                            {category}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end space-x-4 pt-4 border-t">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setStep(1)}
+                    disabled={isSubmitting}
+                  >
+                    Sebelumnya
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={submitDetailForm}
+                    isLoading={isSubmitting}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Menyimpan...' : 'Simpan Detail'}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
+        </>
+      )}
     </div>
-  )};
+  );
+}
