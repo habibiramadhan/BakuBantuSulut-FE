@@ -196,7 +196,7 @@ const HeroSection = () => {
               initial="initial"
             >
               <Image 
-                src="/images/services-education-01.jpeg" 
+                src="/images/hero-service3.JPG" 
                 alt="Pendidikan Anak" 
                 fill
                 className="object-cover"
@@ -221,7 +221,7 @@ const HeroSection = () => {
               }}
             >
               <Image 
-                src="/images/services-health-01.jpeg" 
+                src="/images/hero-service1.JPG" 
                 alt="Kesehatan Anak" 
                 fill
                 className="object-cover"
@@ -246,7 +246,7 @@ const HeroSection = () => {
               }}
             >
               <Image 
-                src="/images/services-development-01.jpeg" 
+                src="/images/hero-service4.JPG" 
                 alt="Pengembangan Keterampilan" 
                 fill
                 className="object-cover"

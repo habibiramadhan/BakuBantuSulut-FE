@@ -15,7 +15,7 @@ export default function ServicesPage() {
       <Header />
       <main>
         <HeroSection />
-        <MainServicesSection />
+        {/* <MainServicesSection /> */}
         <ServiceApproachSection />
         <EligibilitySection />
         <ServiceComparisonSection />

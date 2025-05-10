@@ -58,13 +58,12 @@ const AboutSection = () => {
             </h2>
             
             <p className="text-gray-600 mb-6">
-              Di bakubantu, kami percaya bahwa kebersamaan adalah kunci perubahan sosial. Kami menghubungkan sumber daya dengan panti asuhan dan komunitas yang membutuhkan di seluruh Indonesia, berfokus pada pemberdayaan berkelanjutan yang berdampak positif.
+              Di bakubantu, kami percaya bahwa kebersamaan adalah kunci perubahan sosial. Kami menghubungkan sumber daya dengan panti asuhan dan komunitas yang membutuhkan di Sulawesi Utara, berfokus pada pemberdayaan berkelanjutan yang berdampak positif.
             </p>
             
             <p className="text-gray-600 mb-8">
               Kami berkolaborasi dengan masyarakat lokal, relawan, dan organisasi mitra untuk memastikan bahwa mereka yang rentan mendapatkan akses pendidikan berkualitas, layanan kesehatan, dan dukungan emosional. Program kami dirancang untuk berkelanjutan dan digerakkan oleh semangat gotong royong.
             </p>
-            
             <Link href="/about">
               <Button variant="secondary">Pelajari Lebih Lanjut</Button>
             </Link>
@@ -104,43 +103,43 @@ const ServicesSection = () => {
             </h2>
             
             <p className="text-gray-600 mb-10">
-              Kami menyediakan berbagai layanan untuk memastikan kesejahteraan dan perkembangan anak-anak dalam asuhan kami. Pendekatan holistik kami memenuhi kebutuhan fisik, emosional, dan pendidikan mereka.
+              Fokus layanan kami adalah menjembatani kebutuhan-kebutuhan kelompok rentan dengan sumberdaya yang sesuai melalui penyediaan data. Hal ini diperlengkapi dengan proses identifikasi kebutuhan riil di lapangan, publikasi hasil temuan dan analisis, kolaborasi multipihak, dan mobilisasi sumberdaya manusia (relawan).
             </p>
             
             <div className="space-y-8">
               <div className="flex">
                 <div className="flex-shrink-0 h-12 w-12 bg-lavender-light rounded-lg flex items-center justify-center mr-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-lavender-dark" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Dukungan Keluarga</h3>
-                  <p className="text-gray-600">Kami memberikan bimbingan dan sumber daya kepada keluarga anak berkebutuhan khusus, membantu mereka menghadapi tantangan dan mengakses layanan dukungan.</p>
+                  <h3 className="text-lg font-semibold mb-2">Riset Sosial</h3>
+                  <p className="text-gray-600">Mengadakan riset sosial secara sukarela terkait topik kelompok rentan di Kota dan Kabupaten di Sulawesi Utara agar berbagai pihak dapat menggunakan data ini sebagai referensi dalam perencanaan aksi sosial mereka.</p>
                 </div>
               </div>
               
               <div className="flex">
                 <div className="flex-shrink-0 h-12 w-12 bg-babyBlue-light rounded-lg flex items-center justify-center mr-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-babyBlue-dark" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Manfaat Kesehatan</h3>
-                  <p className="text-gray-600">Pemeriksaan kesehatan rutin, panduan gizi, dan akses ke perawatan medis untuk memastikan kesejahteraan dan perkembangan fisik anak-anak.</p>
+                  <h3 className="text-lg font-semibold mb-2">Perancangan Aksi Respon</h3>
+                  <p className="text-gray-600">Melakukan perancangan aksi respon yang sesuai dengan data temuan riset sosial agar bantuan untuk sektor sosial dapat tepat sasaran dan problem-based.</p>
                 </div>
               </div>
               
               <div className="flex">
                 <div className="flex-shrink-0 h-12 w-12 bg-poppy-light rounded-lg flex items-center justify-center mr-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-poppy-dark" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                    <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd"/>
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Beasiswa</h3>
-                  <p className="text-gray-600">Kami menyediakan kesempatan pendidikan melalui beasiswa, memastikan anak-anak memiliki akses ke pendidikan berkualitas terlepas dari keadaan mereka.</p>
+                  <h3 className="text-lg font-semibold mb-2">Publikasi dan Popularisasi</h3>
+                  <p className="text-gray-600">Melakukan publikasi dan popularisasi hasil riset sosial dan aksi respon sosial yang efektif agar lebih banyak pihak dapat mengefektifkan upaya-upaya sosial mereka.</p>
                 </div>
               </div>
               
@@ -151,8 +150,8 @@ const ServicesSection = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Terapi</h3>
-                  <p className="text-gray-600">Layanan terapi khusus termasuk fisik, okupasi, dan terapi wicara untuk membantu anak-anak mengembangkan keterampilan dan kemampuan penting.</p>
+                  <h3 className="text-lg font-semibold mb-2">Penyediaan Relawan</h3>
+                  <p className="text-gray-600">Membantu penyediaan dan pengalokasian relawan-relawan untuk membantu kelompok rentan sesuai kebutuhan.</p>
                 </div>
               </div>
             </div>
@@ -178,69 +177,82 @@ const ServicesSection = () => {
 // Komponen Bagian Proyek
 const ProjectsSection = () => {
   return (
-    <section id="projects" className="py-20">
+    <section id="projects" className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="flex items-center mb-10">
           <div className="w-12 h-px bg-babyBlue-dark mr-4"></div>
-          <p className="text-sm uppercase tracking-wider font-semibold text-gray-600">PROYEK YANG TELAH KAMI LAKUKAN</p>
+          <p className="text-sm uppercase tracking-wider font-semibold text-babyBlue-dark">PROYEK YANG TELAH KAMI LAKUKAN</p>
         </div>
         
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12">
-          Kami menciptakan tempat di mana anak-anak berkebutuhan khusus dapat berkembang
-        </h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="relative rounded-lg overflow-hidden h-96 group">
-            <Image 
-              src="/images/project-1.jpg" 
-              alt="Misi senyum" 
-              fill
-              className="object-cover transition-transform group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
-              <h3 className="text-xl font-bold mb-2">Misi senyum 1000: Amal di luar ruangan</h3>
-              <p className="text-white/80 mb-4">Inisiatif kami untuk membawa kegembiraan dan pengalaman di luar ruangan kepada 1.000 anak di panti asuhan di seluruh Indonesia.</p>
-              <Link href="#learn-more">
-                <Button variant="outline" size="sm" className="border-white text-white hover:bg-white/10 w-fit">
-                  Pelajari lebih lanjut
-                </Button>
-              </Link>
+        <div className="space-y-16">
+          <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Proyek yang Telah Kami Lakukan</h2>
+            <div className="prose prose-lg text-gray-600">
+              <p>
+                Pada tahun 2024, Baku Bantu memulai proyek pertama yaitu melakukan Survei Kebutuhan Panti Kota Tomohon, Kabupaten Minahasa, dan Kabupaten Minahasa Selatan. Survei dilakukan oleh tim berisikan 16 relawan (dari Pemuda GMIM Sion Tomohon, Conqueror Generation, dan pribadi).
+              </p>
+              <p>
+                Data yang diperoleh dari survei tersebut dipublikasi oleh tim ke media internet (<a href="https://bakubantu.wordpress.com" target="_blank" rel="noopener noreferrer" className="text-babyBlue-dark hover:text-babyBlue-darker">bakubantu.wordpress.com</a>) dan media sosial (Instagram & Tiktok) agar data tersebut dapat menjadi panduan donasi bagi masyarakat yang ingin menyediakan bantuan-bantuan kepada panti/ rumah asuh yang ada.
+              </p>
+              <div className="mt-6 grid grid-cols-3 gap-4 text-center">
+                <div className="bg-babyBlue-light/20 p-4 rounded-lg">
+                  <p className="text-2xl font-bold text-babyBlue-dark">1,200</p>
+                  <p className="text-sm text-gray-600">Likes di Website</p>
+                </div>
+                <div className="bg-babyBlue-light/20 p-4 rounded-lg">
+                  <p className="text-2xl font-bold text-babyBlue-dark">6,500</p>
+                  <p className="text-sm text-gray-600">Likes di Instagram</p>
+                </div>
+                <div className="bg-babyBlue-light/20 p-4 rounded-lg">
+                  <p className="text-2xl font-bold text-babyBlue-dark">2,024</p>
+                  <p className="text-sm text-gray-600">Likes di Tiktok</p>
+                </div>
+              </div>
             </div>
           </div>
-          
-          <div className="relative rounded-lg overflow-hidden h-96 group">
-            <Image 
-              src="/images/project-2.jpg" 
-              alt="Kegiatan mingguan" 
-              fill
-              className="object-cover transition-transform group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
-              <h3 className="text-xl font-bold mb-2">Kegiatan mingguan</h3>
-              <p className="text-white/80 mb-4">Kegiatan rutin yang memberikan anak-anak kesempatan pendidikan dan rekreasi di luar lingkungan sehari-hari mereka.</p>
-              <Link href="#learn-more">
-                <Button variant="outline" size="sm" className="border-white text-white hover:bg-white/10 w-fit">
-                  Pelajari lebih lanjut
-                </Button>
-              </Link>
-            </div>
-          </div>
-          
-          <div className="relative rounded-lg overflow-hidden h-96 group">
-            <Image 
-              src="/images/project-3.jpg" 
-              alt="Kesadaran publik bulanan" 
-              fill
-              className="object-cover transition-transform group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6 text-white">
-              <h3 className="text-xl font-bold mb-2">Kesadaran publik bulanan</h3>
-              <p className="text-white/80 mb-4">Acara dan kampanye publik untuk meningkatkan kesadaran tentang kebutuhan anak-anak yatim piatu dan bagaimana masyarakat dapat mendukung mereka.</p>
-              <Link href="#learn-more">
-                <Button variant="outline" size="sm" className="border-white text-white hover:bg-white/10 w-fit">
-                  Pelajari lebih lanjut
-                </Button>
-              </Link>
+
+          <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Proyek yang Sedang Kami Lakukan</h2>
+            <div className="space-y-8">
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Riset Sosial: Identifikasi Kebutuhan dan Permasalahan</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Sebagai dukungan untuk negara dalam mewujudkan kesejahteraan dan keadilan sosial bagi komunitas-komunitas panti atau rumah asuh, peran dari warga sipil diharapkan dapat mengkatalisasi upaya tersebut. Salah satu bentuk upaya tersebut adalah sebagai relawan data sosial.
+                </p>
+              </div>
+
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Proyek Volunteering Mingguan</h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Kegiatan mingguan dilakukan oleh anggota tetap dan relawan-relawan Baku Bantu di Rumah Asuh Mercyville Kakas. Kegiatan sukarela ini menjadi salah satu bentuk layanan Baku Bantu dalam memobilisasi sumberdaya manusia yang dimiliki.
+                </p>
+                <ul className="mt-4 grid grid-cols-2 gap-2 text-sm text-gray-600">
+                  <li className="flex items-center">
+                    <svg className="w-4 h-4 mr-2 text-babyBlue-dark" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                    </svg>
+                    Tutor Matematika
+                  </li>
+                  <li className="flex items-center">
+                    <svg className="w-4 h-4 mr-2 text-babyBlue-dark" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                    </svg>
+                    Konseling Psikologis
+                  </li>
+                  <li className="flex items-center">
+                    <svg className="w-4 h-4 mr-2 text-babyBlue-dark" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                    </svg>
+                    Pemeriksaan Kesehatan
+                  </li>
+                  <li className="flex items-center">
+                    <svg className="w-4 h-4 mr-2 text-babyBlue-dark" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                    </svg>
+                    Perawatan Lingkungan
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -252,92 +264,56 @@ const ProjectsSection = () => {
 // Komponen Bagian Donasi
 const DonationSection = () => {
   return (
-    <section className="py-20 bg-black text-white">
+    <section className="py-20 bg-gradient-to-br from-gray-900 to-black text-white">
       <div className="container mx-auto px-6">
         <div className="flex flex-col lg:flex-row gap-12 items-center">
           <div className="lg:w-1/2">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Bagaimana kami menggunakan donasi Anda dan ke mana donasi tersebut dialokasikan
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-babyBlue-light to-babyBlue">
+              Bagaimana kami menggunakan donasi Anda
             </h2>
-            <p className="text-white/80 mb-8">
-              Kami memahami bahwa ketika Anda berdonasi, Anda ingin tahu persis ke mana uang Anda mengalir dan kami berjanji untuk transparan.
+            <p className="text-gray-300 mb-8 text-lg">
+              Kami berkomitmen untuk transparansi penuh dalam penggunaan setiap donasi yang kami terima.
             </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-babyBlue rounded-sm mr-2"></div>
-                <span>40% panti asuhan</span>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="bg-white/5 p-4 rounded-lg backdrop-blur-sm">
+                <div className="flex items-center mb-2">
+                  <div className="w-4 h-4 bg-babyBlue rounded-sm mr-2"></div>
+                  <span className="font-semibold">40%</span>
+                </div>
+                <p className="text-sm text-gray-300">Panti Asuhan</p>
               </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-lavender rounded-sm mr-2"></div>
-                <span>35% program kebersihan</span>
+              <div className="bg-white/5 p-4 rounded-lg backdrop-blur-sm">
+                <div className="flex items-center mb-2">
+                  <div className="w-4 h-4 bg-lavender rounded-sm mr-2"></div>
+                  <span className="font-semibold">35%</span>
+                </div>
+                <p className="text-sm text-gray-300">Program Kebersihan</p>
               </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-mango rounded-sm mr-2"></div>
-                <span>10% kegiatan luar</span>
+              <div className="bg-white/5 p-4 rounded-lg backdrop-blur-sm">
+                <div className="flex items-center mb-2">
+                  <div className="w-4 h-4 bg-mango rounded-sm mr-2"></div>
+                  <span className="font-semibold">10%</span>
+                </div>
+                <p className="text-sm text-gray-300">Kegiatan Luar</p>
               </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-poppy rounded-sm mr-2"></div>
-                <span>5% memberi makan</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-forest rounded-sm mr-2"></div>
-                <span>10% membantu orang</span>
+              <div className="bg-white/5 p-4 rounded-lg backdrop-blur-sm">
+                <div className="flex items-center mb-2">
+                  <div className="w-4 h-4 bg-forest rounded-sm mr-2"></div>
+                  <span className="font-semibold">15%</span>
+                </div>
+                <p className="text-sm text-gray-300">Program Bantuan</p>
               </div>
             </div>
           </div>
           
           <div className="lg:w-1/2 flex justify-center">
-            <DonationChart className="w-full max-w-md" />
+            <DonationChart className="w-full max-w-md filter drop-shadow-xl" />
           </div>
         </div>
       </div>
     </section>
   );
 };
-
-// Komponen Bagian Acara
-const EventsSection = () => {
-  return (
-    <section className="py-16">
-      <div className="container mx-auto px-6">
-        <h2 className="text-3xl font-bold text-gray-900 mb-10">Acara Kami</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-mango-light rounded-lg p-6 flex justify-between items-center">
-            <div>
-              <div className="text-center mb-2">
-                <span className="text-3xl font-bold">13</span>
-                <p className="text-xs uppercase">APR</p>
-              </div>
-              <h3 className="text-xl font-semibold mt-4">Sehari bersama anak-anak luar biasa kami</h3>
-            </div>
-            <div className="bg-white rounded-full p-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-          
-          <div className="bg-mango-light rounded-lg p-6 flex justify-between items-center">
-            <div>
-              <div className="text-center mb-2">
-                <span className="text-3xl font-bold">25</span>
-                <p className="text-xs uppercase">APR</p>
-              </div>
-              <h3 className="text-xl font-semibold mt-4">Seminar: Merawat anak-anak dengan autisme</h3>
-            </div>
-            <div className="bg-white rounded-full p-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
 
 // Komponen Halaman Utama
 export default function Home() {

@@ -80,7 +80,7 @@ const ContactHero = () => {
                   </div>
                   <div>
                     <p className="text-xs md:text-sm text-gray-300">Telepon kami di</p>
-                    <p className="text-sm md:text-base font-medium">+62 812 3456 7890</p>
+                    <p className="text-sm md:text-base font-medium">+62 853-3715-2513 (Krisan - Lead Coordinator)</p>
                   </div>
                 </div>
 
@@ -92,7 +92,7 @@ const ContactHero = () => {
                   </div>
                   <div>
                     <p className="text-xs md:text-sm text-gray-300">Email kami di</p>
-                    <p className="text-sm md:text-base font-medium">info@bakubantu.id</p>
+                    <p className="text-sm md:text-base font-medium">bakubantusulut@gmail.com</p>
                   </div>
                 </div>
               </div>

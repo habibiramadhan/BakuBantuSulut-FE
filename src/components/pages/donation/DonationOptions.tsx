@@ -162,7 +162,7 @@ const DonationOptions = () => {
               <Card className="overflow-hidden border-0 shadow-md">
                 <div className="relative h-40">
                   <Image
-                    src="/images/donation-impact-1.jpeg"
+                    src="/images/orphanages1.JPG"
                     alt="Bantuan Pangan"
                     fill
                     className="object-cover"
@@ -179,7 +179,7 @@ const DonationOptions = () => {
               <Card className="overflow-hidden border-0 shadow-md">
                 <div className="relative h-40">
                   <Image
-                    src="/images/donation-impact-2.jpeg"
+                    src="/images/hero-service3.JPG"
                     alt="Bantuan Pendidikan"
                     fill
                     className="object-cover"
@@ -196,7 +196,7 @@ const DonationOptions = () => {
               <Card className="overflow-hidden border-0 shadow-md">
                 <div className="relative h-40">
                   <Image
-                    src="/images/donation-impact-3.jpeg"
+                    src="/images/hero-service1.JPG"
                     alt="Bantuan Kesehatan"
                     fill
                     className="object-cover"

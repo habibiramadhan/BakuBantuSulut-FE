@@ -199,7 +199,7 @@ const ServiceApproachSection = () => {
               
               <div className="relative rounded-2xl overflow-hidden shadow-xl">
                 <Image 
-                  src="/images/services-approach.jpeg" 
+                  src="/images/hero-service2.JPG" 
                   alt="BakuBantu Service Approach" 
                   width={600} 
                   height={400}

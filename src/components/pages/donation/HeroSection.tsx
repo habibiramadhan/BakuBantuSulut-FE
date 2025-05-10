@@ -23,7 +23,7 @@ const HeroSection = () => {
       {/* Background image with overlay gradient */}
       <div className="absolute inset-0 z-0">
         <Image 
-          src="/images/donation-hero.jpeg" 
+          src="/images/hero-service2.JPG" 
           alt="Donasi untuk BakuBantu" 
           fill
           className="object-cover"
@@ -67,7 +67,7 @@ const HeroSection = () => {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="border-white text-white hover:bg-white/20"
+                  className="border-white text-white hover:bg-white/20 bg-black/30"
                 >
                   Lihat Dampak Donasi
                 </Button>
@@ -103,7 +103,7 @@ const HeroSection = () => {
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold text-white">Target Donasi</h3>
                     <span className="bg-poppy/80 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      75% Tercapai
+                      5% Tercapai
                     </span>
                   </div>
                   
@@ -111,13 +111,13 @@ const HeroSection = () => {
                     <motion.div 
                       className="h-full bg-gradient-to-r from-babyBlue to-poppy"
                       initial={{ width: 0 }}
-                      animate={{ width: "75%" }}
+                      animate={{ width: "5%" }}
                       transition={{ duration: 1.5, delay: 0.5 }}
                     />
                   </div>
                   
                   <div className="flex justify-between text-sm text-white/80">
-                    <span>Rp75.000.000</span>
+                    <span>Rp5.000.000</span>
                     <span>Rp100.000.000</span>
                   </div>
                 </div>

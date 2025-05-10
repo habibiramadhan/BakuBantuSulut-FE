@@ -36,7 +36,7 @@ const ImpactSection = () => {
       id: 1,
       title: "Panti Asuhan Kasih Sayang",
       description: "Berkat donasi dari para donatur, kami dapat merenovasi fasilitas tempat tinggal dan belajar untuk 35 anak di Panti Asuhan Kasih Sayang di Manado.",
-      image: "/images/impact-story-1.jpeg",
+      image: "/images/cta-background.jpeg",
       stats: {
         value: 35,
         label: "Anak terbantu"
@@ -46,7 +46,7 @@ const ImpactSection = () => {
       id: 2,
       title: "Program Beasiswa Pendidikan",
       description: "Melalui program beasiswa, 28 anak-anak dari keluarga tidak mampu dapat melanjutkan pendidikan menengah dan kejuruan dengan biaya penuh.",
-      image: "/images/impact-story-2.jpeg",
+      image: "/images/hero-service3.JPG",
       stats: {
         value: 28,
         label: "Penerima beasiswa"
@@ -56,7 +56,7 @@ const ImpactSection = () => {
       id: 3,
       title: "Layanan Kesehatan Gratis",
       description: "Kami menyelenggarakan layanan kesehatan gratis yang telah menjangkau lebih dari 300 anak dan lansia di daerah terpencil Sulawesi Utara.",
-      image: "/images/impact-story-3.jpeg",
+      image: "/images/about_us_01.jpeg",
       stats: {
         value: 300,
         label: "Penerima layanan"
@@ -209,7 +209,7 @@ const ImpactSection = () => {
             <div className="md:w-1/3 flex-shrink-0">
               <div className="rounded-full overflow-hidden w-32 h-32 mx-auto md:w-40 md:h-40 border-4 border-white shadow-lg">
                 <Image
-                  src="/images/testimonial-1.jpeg"
+                  src="/images/testimoni.JPG"
                   alt="Ibu Maria"
                   width={160}
                   height={160}

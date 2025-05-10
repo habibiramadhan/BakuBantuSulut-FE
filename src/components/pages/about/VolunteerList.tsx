@@ -25,6 +25,54 @@ interface FilterProps {
 }
 
 /**
+ * Hierarchy order for positions
+ * 1. Lead Coordinator
+ * 2. Procurement Officer
+ * 3. Communication Officer  
+ * 4. Administration Officer
+ * 5. Psychosocial Program Officer
+ * 6. Government Relations Officer
+ * 7. Finance Officer
+ * 8. Software Development Volunteer
+ * 9. Volunteer
+ */
+const POSITION_HIERARCHY: { [key: string]: number } = {
+  'Lead Coordinator': 1,
+  'Procurement Officer': 2,
+  'Communication Officer': 3,
+  'Administration Officer': 4,
+  'Psychosocial Program Officer': 5,
+  'Government Relations Officer': 6,
+  'Finance Officer': 7,
+  'Software Development Volunteer': 8,
+  'Volunteer': 9,
+  // Default value for unknown positions
+  'default': 99
+};
+
+/**
+ * Function to get position order
+ */
+const getPositionOrder = (jabatan: string | null | undefined): number => {
+  if (!jabatan) return POSITION_HIERARCHY['default'];
+  
+  // Check for exact match first
+  if (jabatan in POSITION_HIERARCHY) {
+    return POSITION_HIERARCHY[jabatan];
+  }
+  
+  // Check for partial matches (case insensitive)
+  const jabatanLower = jabatan.toLowerCase();
+  for (const [key, value] of Object.entries(POSITION_HIERARCHY)) {
+    if (key.toLowerCase().includes(jabatanLower) || jabatanLower.includes(key.toLowerCase())) {
+      return value;
+    }
+  }
+  
+  return POSITION_HIERARCHY['default'];
+};
+
+/**
  * Individual volunteer card component
  */
 const VolunteerCard: React.FC<VolunteerCardProps> = ({ volunteer, className }) => {
@@ -32,6 +80,8 @@ const VolunteerCard: React.FC<VolunteerCardProps> = ({ volunteer, className }) =
   const gender = volunteer.jenisKelamin === 'MALE' ? 'Laki-laki' : 'Perempuan';
   // Handle missing profile image
   const imageUrl = volunteer.profileImage || '/images/default-profile.jpg';
+  // Get position order for badge styling
+  const positionOrder = getPositionOrder(volunteer.jabatan);
   
   return (
     <div className={cn("group", className)}>
@@ -65,7 +115,18 @@ const VolunteerCard: React.FC<VolunteerCardProps> = ({ volunteer, className }) =
           <h3 className="text-lg font-semibold text-gray-900 text-center">{volunteer.namaLengkap}</h3>
           
           {volunteer.jabatan && (
-            <p className="text-sm text-gray-600 text-center mb-3">{volunteer.jabatan}</p>
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <p className="text-sm text-gray-600">{volunteer.jabatan}</p>
+              {positionOrder <= 7 && (
+                <div className="inline-flex items-center">
+                  <span className="text-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  </span>
+                </div>
+              )}
+            </div>
           )}
           
           <div className="space-y-2 mt-4 text-sm">
@@ -189,8 +250,13 @@ const VolunteerStats: React.FC<StatsProps> = ({ volunteers }) => {
   // Get unique cities
   const uniqueCities = [...new Set(volunteers.map(v => v.alamatDomisili))].length;
   
+  // Count leadership positions (only ranks 1-7, excluding Software Development Volunteer and regular Volunteer)
+  const leadershipCount = volunteers.filter(v => 
+    v.jabatan && getPositionOrder(v.jabatan) <= 7
+  ).length;
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-12">
       <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
         <div className="flex items-center justify-between">
           <div>
@@ -208,11 +274,25 @@ const VolunteerStats: React.FC<StatsProps> = ({ volunteers }) => {
       <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-500">Laki-laki</p>
-            <p className="text-3xl font-bold text-poppy-dark">{maleCount}</p>
+            <p className="text-sm text-gray-500">Posisi Kepemimpinan</p>
+            <p className="text-3xl font-bold text-poppy-dark">{leadershipCount}</p>
           </div>
           <div className="bg-poppy-light/30 p-3 rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-poppy-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-500">Laki-laki</p>
+            <p className="text-3xl font-bold text-forest-dark">{maleCount}</p>
+          </div>
+          <div className="bg-forest-light/30 p-3 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-forest-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
@@ -237,10 +317,10 @@ const VolunteerStats: React.FC<StatsProps> = ({ volunteers }) => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500">Kota</p>
-            <p className="text-3xl font-bold text-forest-dark">{uniqueCities}</p>
+            <p className="text-3xl font-bold text-mango-dark">{uniqueCities}</p>
           </div>
-          <div className="bg-forest-light/30 p-3 rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-forest-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="bg-mango-light/30 p-3 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-mango-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
           </div>
@@ -303,9 +383,9 @@ const VolunteerList: React.FC = () => {
       .sort((a, b) => a.nama.localeCompare(b.nama));
   }, [volunteers]);
 
-  // Filter volunteers based on search and wilayah - using useMemo for performance
-  const filteredVolunteers = useMemo(() => {
-    return volunteers.filter(volunteer => {
+  // Filter and sort volunteers based on search, wilayah, and position hierarchy
+  const filteredAndSortedVolunteers = useMemo(() => {
+    let filtered = volunteers.filter(volunteer => {
       // Filter by wilayah if selected
       const matchesWilayah = selectedWilayah === null || 
         (volunteer.wilayah && volunteer.wilayah.id === selectedWilayah);
@@ -316,6 +396,20 @@ const VolunteerList: React.FC = () => {
         (volunteer.jabatan && volunteer.jabatan.toLowerCase().includes(searchTerm.toLowerCase()));
       
       return matchesWilayah && matchesSearch;
+    });
+
+    // Sort by position hierarchy, then by name
+    return filtered.sort((a, b) => {
+      const orderA = getPositionOrder(a.jabatan);
+      const orderB = getPositionOrder(b.jabatan);
+      
+      // Primary sort: by position hierarchy
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      
+      // Secondary sort: alphabetically by name if same position order
+      return a.namaLengkap.localeCompare(b.namaLengkap);
     });
   }, [volunteers, selectedWilayah, searchTerm]);
 
@@ -377,7 +471,7 @@ const VolunteerList: React.FC = () => {
             
             {/* Volunteer grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredVolunteers.map((volunteer) => (
+              {filteredAndSortedVolunteers.map((volunteer) => (
                 <VolunteerCard 
                   key={volunteer.id} 
                   volunteer={volunteer} 
@@ -386,7 +480,7 @@ const VolunteerList: React.FC = () => {
             </div>
             
             {/* Empty state */}
-            {filteredVolunteers.length === 0 && (
+            {filteredAndSortedVolunteers.length === 0 && (
               <div className="text-center py-10 bg-white rounded-lg shadow-sm">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-yellow-100 mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">

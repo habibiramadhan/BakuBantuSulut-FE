@@ -21,7 +21,7 @@ const OrphanageRegister = () => {
           >
             <div className="relative h-96 w-full rounded-xl overflow-hidden shadow-xl">
               <Image 
-                src="/images/orphanages/become-partner.jpg" 
+                src="/images/orphanages1.JPG" 
                 alt="Menjadi Mitra BakuBantu"
                 fill
                 className="object-cover"
@@ -95,7 +95,7 @@ const OrphanageRegister = () => {
                 </li>
               </ul>
               
-              <Link href="/orphanages/register">
+              <a href="mailto:bakubantusulut@gmail.com">
                 <Button 
                   variant="primary" 
                   size="lg"
@@ -108,12 +108,12 @@ const OrphanageRegister = () => {
                 >
                   Daftarkan Panti Asuhan
                 </Button>
-              </Link>
+              </a>
               
               <p className="mt-4 text-sm text-gray-500 text-center">
                 Untuk informasi lebih lanjut, silakan hubungi kami di{' '}
-                <a href="mailto:mitra@bakubantu.id" className="text-babyBlue-dark hover:underline">
-                  mitra@bakubantu.id
+                <a href="mailto:bakubantusulut@gmail.com" className="text-babyBlue-dark hover:underline">
+                  bakubantusulut@gmail.com
                 </a>
               </p>
             </div>

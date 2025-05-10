@@ -146,6 +146,23 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit, isSubmitting }) => 
     e.preventDefault();
     
     if (validateForm()) {
+      // Membuat body email
+      const emailBody = `
+Nama: ${formData.name}
+Email: ${formData.email}
+Telepon: ${formData.phone || 'Tidak diisi'}
+Topik: ${formData.subject}
+
+Pesan:
+${formData.message}
+      `;
+
+      // Membuat URL mailto
+      const mailtoUrl = `mailto:bakubantusulut@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(emailBody)}`;
+      
+      // Membuka email client
+      window.location.href = mailtoUrl;
+
       onSubmit(formData);
     }
   };

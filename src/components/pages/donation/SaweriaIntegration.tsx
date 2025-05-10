@@ -44,7 +44,7 @@ const SaweriaIntegration: React.FC<SaweriaIntegrationProps> = ({
   // Construct Saweria URL with amount
   const getSaweriaUrl = () => {
     // Replace this with your actual Saweria username
-    const saweriaUsername = "bakubantu";
+    const saweriaUsername = "bakubantudonation";
     let url = `https://saweria.co/${saweriaUsername}`;
     
     // Add amount parameter if available
@@ -60,6 +60,12 @@ const SaweriaIntegration: React.FC<SaweriaIntegrationProps> = ({
     navigator.clipboard.writeText(getSaweriaUrl());
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  // Handle donation button click
+  const handleDonationClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    alert("Mohon maaf, saat ini kami sedang dalam maintenance. Silakan coba beberapa saat lagi.");
   };
 
   return (
@@ -112,7 +118,7 @@ const SaweriaIntegration: React.FC<SaweriaIntegrationProps> = ({
         <div className="flex items-center mb-6">
           <div className="flex-shrink-0 w-12 h-12 mr-4">
             <Image 
-              src="/images/saweria-logo.png" 
+              src="/images/saweria.png" 
               alt="Saweria Logo"
               width={48}
               height={48}
@@ -126,25 +132,19 @@ const SaweriaIntegration: React.FC<SaweriaIntegrationProps> = ({
         </div>
 
         <div className="space-y-3">
-          <a 
-            href={getSaweriaUrl()} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="block w-full"
+          <Button 
+            variant="primary" 
+            size="full"
+            className={`bg-gradient-to-r ${donationAmount > 0 ? 'from-poppy to-poppy-dark' : 'from-gray-400 to-gray-500'} flex items-center justify-center`}
+            disabled={donationAmount <= 0}
+            onClick={handleDonationClick}
           >
-            <Button 
-              variant="primary" 
-              size="full"
-              className={`bg-gradient-to-r ${donationAmount > 0 ? 'from-poppy to-poppy-dark' : 'from-gray-400 to-gray-500'} flex items-center justify-center`}
-              disabled={donationAmount <= 0}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clipRule="evenodd" />
-                <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z" />
-              </svg>
-              Donasi via Saweria
-            </Button>
-          </a>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clipRule="evenodd" />
+              <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z" />
+            </svg>
+            Donasi via Saweria
+          </Button>
 
           <div className="flex space-x-3">
             <button
@@ -199,7 +199,7 @@ const SaweriaIntegration: React.FC<SaweriaIntegrationProps> = ({
             <div className="flex justify-center mb-4">
               <div className="relative w-64 h-64 bg-gray-100 rounded-lg p-4 border border-gray-200">
                 <Image
-                  src="/images/saweria-qr-example.png"
+                  src="/images/saweria.png"
                   alt="Saweria QR Code"
                   fill
                   className="object-contain p-4"
