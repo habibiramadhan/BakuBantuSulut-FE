@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } f
 import { getToken } from '@/services/auth';
 
 // Base API URL
-const API_BASE_URL = 'https://baku-bantu.vercel.app';
+const API_BASE_URL = 'https://www.be-bakubantusulut.org';
 
 /**
  * Create and configure an Axios instance
