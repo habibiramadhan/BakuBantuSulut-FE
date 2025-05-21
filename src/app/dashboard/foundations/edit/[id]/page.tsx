@@ -13,7 +13,7 @@ import { YayasanResponse } from '@/services/yayasanService';
 export default function EditYayasanPage() {
   const router = useRouter();
   const params = useParams();
-  const id = parseInt(params.id as string, 10);
+  const id = params?.id ? parseInt(params.id as string, 10) : 0;
   const toast = useToast();
   
   const { fetchYayasanById, updateYayasan, isSaving } = useYayasan();

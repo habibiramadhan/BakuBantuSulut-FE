@@ -48,7 +48,7 @@ interface OrphanageAPIData {
 export default function EditOrphanagePage() {
   const router = useRouter();
   const params = useParams();
-  const id = parseInt(params.id as string, 10);
+  const id = params?.id ? parseInt(params.id as string, 10) : 0;
   const toast = useToast();
   
   const [orphanage, setOrphanage] = useState<OrphanageAPIData | null>(null);
