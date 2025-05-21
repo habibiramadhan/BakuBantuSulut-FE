@@ -1,4 +1,4 @@
-// src/services/orphanageService.ts (Extended)
+// src/services/orphanageService.ts
 import { api } from '@/lib/http-client';
 
 export interface Orphanage {

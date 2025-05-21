@@ -4,3 +4,4 @@ export { default as OrphanageFilter } from './OrphanageFilter';
 export { default as OrphanageGrid } from './OrphanageGrid';
 export { default as OrphanageCard } from './OrphanageCard';
 export { default as OrphanageRegister } from './OrphanageRegister';
+export { default as EditOrphanageForm } from './EditOrphanageForm';
