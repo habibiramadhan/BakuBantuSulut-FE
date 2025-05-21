@@ -4,3 +4,4 @@ export { default as YayasanFormModal } from './YayasanFormModal';
 export { default as YayasanDeleteModal } from './YayasanDeleteModal';
 export { default as YayasanDetailModal } from './YayasanDetailModal';
 export { default as YayasanHeader } from './YayasanHeader';
+export { default as EditYayasanForm } from './EditYayasanForm';
