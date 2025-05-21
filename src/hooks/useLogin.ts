@@ -1,10 +1,13 @@
 // src/hooks/useLogin.ts
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { login as authLogin, LoginCredentials, setAuthData } from '@/services/auth';
 import { useToast } from '@/contexts/ToastContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { handleApiError } from '@/lib/api-error-utils';
+
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
 
 interface LoginHookReturn {
   isLoading: boolean;
@@ -13,10 +16,6 @@ interface LoginHookReturn {
   clearError: () => void;
 }
 
-/**
- * Hook for handling login functionality
- * @returns Login functions and state
- */
 export function useLogin(): LoginHookReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,38 +42,47 @@ export function useLogin(): LoginHookReturn {
           return false;
         }
 
-        // Call the login API
-        const response = await authLogin(credentials);
+        // Call our new API endpoint
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...credentials,
+            rememberMe
+          }),
+        });
+
+        const data = await response.json();
         
-        // Update the auth context
-        contextLogin(response.data.token, response.data.user);
-        
-        // Also set the auth data directly
-        setAuthData(response.data.token, response.data.user);
-        
-        // If remember me is checked, store a longer cookie
-        if (rememberMe) {
-          // 30 days expiry
-          document.cookie = `auth_token=${response.data.token}; path=/; max-age=2592000; SameSite=Strict`;
+        if (!response.ok) {
+          throw new Error(data.message || 'Login failed');
         }
+        
+        // Update auth context with user data
+        contextLogin(data.data.user);
+        
+        // Store user info in localStorage for client access
+        localStorage.setItem('user_info', JSON.stringify(data.data.user));
         
         // Show success message
         toast.success('Login successful!', 'Welcome back');
         
+        // Redirect to dashboard
+        router.push('/dashboard');
+        
         return true;
       } catch (err) {
-        // Use our error handling utility
-        const formattedError = handleApiError(err, toast, (errorInfo) => {
-          // Set the error message for the form
-          setError(errorInfo.message);
-        });
-        
+        const errorMessage = err instanceof Error ? err.message : 'Login failed';
+        setError(errorMessage);
+        toast.error(errorMessage);
         return false;
       } finally {
         setIsLoading(false);
       }
     },
-    [contextLogin, toast]
+    [contextLogin, toast, router]
   );
 
   const clearError = useCallback(() => {

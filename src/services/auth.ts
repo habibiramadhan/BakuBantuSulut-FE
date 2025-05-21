@@ -27,6 +27,33 @@ export interface LoginResponse {
   };
 }
 
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  role: 'ADMIN' | 'SUPERADMIN';
+  status: string;
+  username?: string;
+  profileImage?: string | null;
+  region?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string | null;
+}
+
+export interface LoginResponse {
+  message: string;
+  data: {
+    user: User;
+    token: string;
+  };
+}
+
+
 /**
  * Login function using the real API
  * @param credentials Email and password
@@ -130,3 +157,4 @@ export function hasPermission(requiredRole: 'ADMIN' | 'SUPERADMIN'): boolean {
   
   return false;
 }
+
